@@ -13,7 +13,7 @@ contract HavaToken is IERC20, EIP712("HavaToken", "1.0.0") {
 
     string public constant name = "HAVA";
     string public constant symbol = "HAVA";
-    uint8 public constant decimals = 18;
+    uint8 public constant decimals = 0;
 
     uint public constant costPerToken = 1000 gwei;
 
