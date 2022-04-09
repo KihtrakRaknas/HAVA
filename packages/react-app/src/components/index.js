@@ -24,7 +24,7 @@ export const Button = styled.button`
 `;
 
 export const Container = styled.div`
-  background-color: #282c34;
+  background-color: #ebf6ff;
   display: flex;
   flex-direction: column;
   height: calc(100vh);
@@ -32,7 +32,7 @@ export const Container = styled.div`
 
 export const Header = styled.header`
   align-items: center;
-  background-color: #282c34;
+  background-color: #ebf6ff;
   color: white;
   display: flex;
   flex-direction: row;

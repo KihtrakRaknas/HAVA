@@ -13387,6 +13387,11 @@ react-error-overlay@^6.0.9:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.10.tgz#0fe26db4fa85d9dbb8624729580e90e7159a59a6"
   integrity sha512-mKR90fX7Pm5seCOfz8q9F+66VCc1PGsWSBxKbITjfKVQHMNF2zudxHnMdJiB1fRCb+XsbQV9sO9DCkgsMQgBIA==
 
+react-gradient@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/react-gradient/-/react-gradient-1.0.2.tgz#eab261cfd36b3dc3fb659c4438e12a27bea1f3bd"
+  integrity sha512-0SWuauujHh0R0Q+AaogUm/t0pAblzJVW5BYoYbJ4Kh8rCEb4EomsEK8X2QiR1UXR7iOiiqRuJZixTrKeMaFuSQ==
+
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
