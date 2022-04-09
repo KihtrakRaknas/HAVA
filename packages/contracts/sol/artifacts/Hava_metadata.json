@@ -1,0 +1,50 @@
+{
+	"compiler": {
+		"version": "0.8.7+commit.e28d00a7"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Hava.sol": "Hava"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"Hava.sol": {
+			"keccak256": "0x5a6a092bebf31c66e149ab6994f373fe600ee50a15322521b7180f9b7d4e6edb",
+			"urls": [
+				"bzz-raw://58f4fa188353b21769078d2939e4461bd649c6c00155ad8908820ab3af7333a9",
+				"dweb:/ipfs/QmPc9SZXnHWGEpPHk8HhuuUx4JX59eQUQoEPqC6jgnEC7C"
+			]
+		}
+	},
+	"version": 1
+}
