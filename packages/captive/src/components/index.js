@@ -5,9 +5,19 @@ export const Body = styled.div`
   color: white;
   display: flex;
   flex-direction: column;
-  font-size: calc(10px + 2vmin);
   justify-content: center;
   margin-top: 40px;
+`;
+
+
+export const BodyContainer = styled.div`
+  align-items: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 40px;
+  width: 400px;
 `;
 
 export const Button = styled.button`
@@ -16,8 +26,7 @@ export const Button = styled.button`
   border-radius: 8px;
   color: #282c34;
   cursor: pointer;
-  font-size: 16px;
-  margin: 0px 20px;
+  margin: 0 20px 0 0;
   padding: 12px 24px;
   text-align: center;
   text-decoration: none;

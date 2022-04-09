@@ -1,0 +1,22 @@
+.alert {
+    width: 100%;
+    border-radius: 4px;
+    padding: 8px;
+    box-sizing: border-box;
+    margin: 0 0 8px;
+}
+
+.alert_close {
+    float: right;
+    cursor: pointer;
+}
+
+.success {
+    background-color: green;
+    border-color: green;
+}
+
+.danger {
+    background-color: red;
+    border-color: red;
+}
