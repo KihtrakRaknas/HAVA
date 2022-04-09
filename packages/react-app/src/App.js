@@ -27,7 +27,7 @@ function WalletButton(props) {
 
   useEffect(() => {
     if (error) {
-      alert("Error while connecting wallet: "+error.message);
+      console.log("Error while connecting wallet: "+error.message);
     }
   }, [error]);
 
@@ -37,8 +37,6 @@ function WalletButton(props) {
       onClick={() => {
         if (!account) {
           activateBrowserWallet();
-        } else {
-          deactivate();
         }
       }}
     >
@@ -50,7 +48,8 @@ function WalletButton(props) {
 
 function App() {
   const multiplier=1.0
-  const [balance, setBalance] = useState("0.0")
+  const [conversionBalance, setConversionBalance] = useState("0.0")
+
   // Read more about useDapp on https://usedapp.io/
   // const { error: contractCallError, value: tokenBalance } =
   //   useCall({
@@ -65,7 +64,7 @@ function App() {
   const daiBalance = useTokenBalance(addresses.havaToken, account)
 
   const handleChange = (event) => {
-    setBalance(parseFloat(event.target.value)*multiplier);
+    setConversionBalance(parseFloat(event.target.value)*multiplier);
   };
 
   return (
@@ -88,16 +87,16 @@ function App() {
         }}>
           <p style={{color:"grey"}}>Max ETH: {etherBalance?formatEther(etherBalance):"Not connected"}</p>
         <div style={{display: 'flex',flexDirection: 'row', paddingBottom:30}}>
-          <TextField id="outlined-basic" placeholder="0.0" variant="outlined" onChange={handleChange} />
+          <TextField id="outlined-basic" placeholder="0.0" variant="outlined" onChange={handleChange} InputProps={{style:{fontSize:20}}} fullWidth/>
           <p style={{paddingLeft: 10}}> ETH</p>
         </div>
-        <div style={{display: 'flex',flexDirection: 'row',paddingBottom:50, paddingLeft:10}}>
-        <TextField disabled defaultValue={balance} value={balance} variant="filled"/>
+        <div style={{display: 'flex',flexDirection: 'row',paddingBottom:40, paddingLeft:10}}>
+        <TextField disabled defaultValue={conversionBalance} value={conversionBalance} InputProps={{style:{fontSize:20}}} variant="filled" fullWidth/>
           <p style={{paddingLeft: 10}}>HAVA</p>
         </div>
           <WalletButton color="#d9e6ff" textColor="#002c7d"/>
         </div>
-    </Container>
+    </Container> 
   );
 }
 
