@@ -1,0 +1,35 @@
+.button {
+    background-color: rgb(33, 36, 41);
+    border: 1px solid #bbbaba;
+    color: rgb(255, 255, 255);
+    font-weight: 500;
+
+    padding: 10px;
+    border-radius: 10px;
+
+    transition: border 100ms, background-color 100ms;
+    margin: auto 4px auto 0;
+}
+
+.button.borderless {
+    border: 1px solid transparent;
+}
+
+.button:disabled {
+    filter: grayscale(50%);
+    cursor: not-allowed;
+}
+
+.button:hover:not(:disabled) {
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.danger {
+    border: 1px solid #fa6060;
+}
+
+.danger:hover:not(:disabled) {
+    border: 1px solid #f5b0b0;
+    background: #d9534f;
+}
