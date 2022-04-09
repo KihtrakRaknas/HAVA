@@ -47,8 +47,13 @@ function WalletButton(props) {
 }
 
 function App() {
-  const multiplier=1.0
-  const [conversionBalance, setConversionBalance] = useState("0.0")
+  const multiplier={
+    "ETH": 2.0,
+    "HAVA": 0.5
+  }
+  const [currentCurrency, setCurrentCurrency] = useState("ETH")
+  const [balanceText, setBalanceText] = useState("")
+  const [conversionBalance, setConversionBalance] = useState(0.0  )
 
   // Read more about useDapp on https://usedapp.io/
   // const { error: contractCallError, value: tokenBalance } =
@@ -64,7 +69,8 @@ function App() {
   const daiBalance = useTokenBalance(addresses.havaToken, account)
 
   const handleChange = (event) => {
-    setConversionBalance(parseFloat(event.target.value)*multiplier);
+    setBalanceText(event.target.value)
+    setConversionBalance(parseFloat(event.target.value)*multiplier[currentCurrency]);
   };
 
   return (
@@ -83,13 +89,18 @@ function App() {
           borderRadius: 10,
         }}>
           <p style={{color:"grey"}}>Max ETH: {etherBalance?formatEther(etherBalance):"Not connected"}</p>
-        <div style={{display: 'flex',flexDirection: 'row', paddingBottom:30}}>
-          <TextField id="outlined-basic" placeholder="0.0" variant="outlined" onChange={handleChange} InputProps={{style:{fontSize:20}}} fullWidth/>
-          <p style={{paddingLeft: 10}}> ETH</p>
+        <div style={{display: 'flex',flexDirection: 'row'}}>
+          <TextField id="outlined-basic" placeholder="0.0" variant="outlined" value={balanceText} onChange={handleChange} InputProps={{style:{fontSize:20}}} fullWidth/>
+          <p style={{paddingLeft: 10}}>{currentCurrency}</p>
         </div>
+        <p onClick={()=>{
+          setBalanceText("0")
+          setCurrentCurrency((currentCurrency==="HAVA")?"ETH":"HAVA");
+          setConversionBalance(0)
+        }}>↑↓ Exchange</p>
         <div style={{display: 'flex',flexDirection: 'row',paddingBottom:40, paddingLeft:10}}>
         <TextField disabled defaultValue={conversionBalance} value={conversionBalance} InputProps={{style:{fontSize:20}}} variant="filled" fullWidth/>
-          <p style={{paddingLeft: 10}}>HAVA</p>
+          <p style={{paddingLeft: 10}}>{currentCurrency==="HAVA"?"ETH":"HAVA"}</p>
         </div>
           <WalletButton color="#d9e6ff" textColor="#002c7d"/>
         </div>
