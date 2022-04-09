@@ -24,15 +24,14 @@ export const Button = styled.button`
 `;
 
 export const Container = styled.div`
-  background-color: #ebf6ff;
+background: linear-gradient(#cf595a, #7479b8);
   display: flex;
   flex-direction: column;
-  height: calc(100vh);
+  height: 100vh;
 `;
 
 export const Header = styled.header`
   align-items: center;
-  background-color: #ebf6ff;
   color: white;
   display: flex;
   flex-direction: row;

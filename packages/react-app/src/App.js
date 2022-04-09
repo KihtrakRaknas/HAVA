@@ -3,7 +3,7 @@ import { Contract } from "@ethersproject/contracts";
 import { formatEther } from '@ethersproject/units'
 import { shortenAddress, useCall, useEthers, useLookupAddress, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
-
+import { Gradient } from 'react-gradient';
 import { Body, Button, Container, Header, Image, Link } from "./components";
 import TextField from '@material-ui/core/TextField'
 
@@ -69,16 +69,13 @@ function App() {
 
   return (
     <Container>
-      <Header>
-        <WalletButton color="white"/>
-      </Header>
-
         <div style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
           alignSelf: 'center',
+          marginTop: '25vh',
           width: '20%',
           height: '30%',
           backgroundColor: 'white',
