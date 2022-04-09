@@ -1,25 +1,20 @@
 import "./index.css";
-import {DAppProvider, Mainnet, Rinkeby} from "@usedapp/core";
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom"
+import { Router } from "react-router-dom";
 
+import { createBrowserHistory } from "history";
+import * as serviceWorker from './serviceWorker';
 import App from "./App";
+import './assets/scss/style.scss';
+const history = createBrowserHistory();
 
-// Change this to your own Infura project id: https://infura.io/register
-const INFURA_PROJECT_ID = "239ff2f143084d0f957c39a01c46998e";
-const config = {
-  readOnlyChainId: Rinkeby.chainId,
-  readOnlyUrls: {
-    [Mainnet.chainId]: "https://mainnet.infura.io/v3/" + INFURA_PROJECT_ID,
-    [Rinkeby.chainId]: "https://rinkeby.infura.io/v3/" + INFURA_PROJECT_ID,
-  },
-}
 
 ReactDOM.render(
-  <React.StrictMode>
-    <DAppProvider config={config}>
+  <Router history={history}>
         <App />
-    </DAppProvider>
-  </React.StrictMode>,
+  </Router>,
   document.getElementById("root"),
 );
+
+serviceWorker.unregister();
