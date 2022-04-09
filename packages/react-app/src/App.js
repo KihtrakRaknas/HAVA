@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
-import { formatEther } from '@ethersproject/units'
+import { formatEther, formatUnits } from '@ethersproject/units'
 import { shortenAddress, useCall, useEthers, useLookupAddress, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 import { Gradient } from 'react-gradient';
@@ -66,28 +66,37 @@ function App() {
   const { account } = useEthers()
   const etherBalance = useEtherBalance(account)
   console.log(etherBalance)
-  const daiBalance = useTokenBalance(addresses.havaToken, account)
+  const havaBalance = useTokenBalance(addresses.havaToken, account)
+  console.log(havaBalance)
 
   const handleChange = (event) => {
     setBalanceText(event.target.value)
     setConversionBalance(parseFloat(event.target.value)*multiplier[currentCurrency]);
   };
 
+  const divStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    alignSelf: 'center',
+    marginTop: '5vh',
+    width: '20%',
+    // height: '30%',
+    backgroundColor: 'white',
+    padding: 5,
+    borderRadius: 10,
+  }
+
   return (
     <Container>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          alignSelf: 'center',
-          marginTop: '25vh',
-          width: '20%',
-          height: '30%',
-          backgroundColor: 'white',
-          padding: 20,
-          borderRadius: 10,
-        }}>
+              <Header>
+            <WalletButton/>
+        </Header>
+      {havaBalance && <div style={divStyle}>
+        <p>HAVA Balance: {formatUnits(havaBalance, 0)}</p>
+      </div>}
+        <div style={divStyle}>
           <p style={{color:"grey"}}>Max ETH: {etherBalance?formatEther(etherBalance):"Not connected"}</p>
         <div style={{display: 'flex',flexDirection: 'row'}}>
           <TextField id="outlined-basic" placeholder="0.0" variant="outlined" value={balanceText} onChange={handleChange} InputProps={{style:{fontSize:20}}} fullWidth/>
