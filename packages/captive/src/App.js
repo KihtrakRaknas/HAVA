@@ -1,12 +1,28 @@
-import {useQuery} from "@apollo/client";
-import {Contract} from "@ethersproject/contracts";
-import {shortenAddress, useCall, useEthers, useLookupAddress} from "@usedapp/core";
+import {shortenAddress, useEthers, useLookupAddress, Rinkeby} from "@usedapp/core";
 import React, {useCallback, useEffect, useState} from "react";
 
 import {Body, Button, Container, Header} from "./components";
 
-import {abis, addresses} from "@my-app/contracts";
-import GET_TRANSFERS from "./graphql/subgraph";
+import {addresses} from "@my-app/contracts";
+
+function useServerStatus() {  
+  const defaultObj = {
+    dataUsed: 0,
+    dataLimit: 0,
+    initialized: false,
+    nonce: ''
+  }
+  const [response, setResponse] = useState(defaultObj);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch("https://api.my-app.com/status").then(res => res.json()).then(json=>json?setResponse(json):defaultObj).catch(()=>setResponse(defaultObj));
+    }, 1000);
+    return () => clearInterval(interval);
+  });
+
+  return response;
+}
 
 function WalletButton() {
     const [rendered, setRendered] = useState("");
@@ -44,40 +60,73 @@ function WalletButton() {
     </Button>);
 }
 
+const domain = {
+    name: 'HavaToken',
+    version: '1.0.0',
+    chainId: Rinkeby.chainId,
+    verifyingContract: addresses.havaToken,
+}; 
+ 
+// The named list of all type definitions
+const types = {
+    // ClientTransferAuthorization: [
+    //     {name: 'amount', type: 'uint256'},
+    //     {name: 'nonce', type: 'uint256'}
+    // ],
+    ClientLockAuthorization: [
+        {name: 'amount', type: 'uint256'},
+        {name: 'nonce', type: 'uint256'}
+    ]
+};
+
+// The data to sign
 function App() {
-    // Read more about useDapp on https://usedapp.io/
-    const {error: contractCallError, value: tokenBalance} = useCall({
-        contract: new Contract(addresses.havaToken, abis.hava),
-        method: "balanceOf",
-        args: ["0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
-    }) ?? {};
+    const {account, library} = useEthers();
 
-    const {loading, error: subgraphQueryError, data} = useQuery(GET_TRANSFERS);
+    const {dataUsed, dataLimit, initialized, nonce} = useServerStatus();
 
-    useEffect(() => {
-        if (subgraphQueryError) {
-            console.error("Error while querying subgraph:", subgraphQueryError.message);
-            return;
-        }
-        if (!loading && data && data.transfers) {
-            console.log({transfers: data.transfers});
-        }
-    }, [loading, subgraphQueryError, data]);
+    const signRequest = useCallback((amount, nonce) => {
+      if (!nonce) {
+        // generate random nonce uint128
+        nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
+      }
+        // console.log(account)
+        if (account)
+            library.getSigner()._signTypedData(domain, types, {
+              amount: amount,
+              nonce: nonce
+          }).then(signedMessage => {
+              // TODO: Send signed message to server
+              console.log(signedMessage);
+            });
+    }, [account, library]);
 
     return (<Container>
         <Header>
             <WalletButton/>
         </Header>
-
         <Body>
             <h1>Hava</h1>
+
             <h2>A decentralized and open internet for everyone.</h2>
+            {
+            initialized?
+            <>
+              <h3>Your connection has initialized. You have used {dataUsed} MB of the {dataLimit} MB you have.</h3>
 
-            <h3>Would you like to initialize a connection through this router?</h3>
+              {account?<Button onClick={()=>signRequest(5,nonce)}>
+                  Add data ({dataLimit - dataUsed} MB left)
+              </Button>:<WalletButton/>}
+            </>
+            :
+            <>
+              <h3>Would you like to initialize a connection through this router?</h3>
 
-            <button>
-                Connect to internet (1 HAVA).
-            </button>
+              {account?<Button onClick={()=>signRequest(1)}>
+                  Initialize Connection (1 HAVA).
+              </Button>:<WalletButton/>}
+            </>
+            }
         </Body>
     </Container>);
 }

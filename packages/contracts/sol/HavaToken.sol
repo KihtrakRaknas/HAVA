@@ -98,29 +98,31 @@ contract HavaToken is IERC20, EIP712("HavaToken", "1.0.0") {
         require(allowances[sender][msg.sender] >= amount);
 
         transferFromNoAllowanceCheck(sender, recipient, amount);
+        allowances[sender][msg.sender] = allowances[sender][msg.sender].sub(amount);
 
         return true;
     }
 
     function transferFromNoAllowanceCheck(address sender, address recipient, uint256 amount) internal {
-        require(balances[sender] >= amount);
+        require(balances[sender] >= amount, "not enough funds");
 
         balances[sender] = balances[sender].sub(amount);
-        allowances[sender][msg.sender] = allowances[sender][msg.sender].sub(amount);
+        balances[recipient] = balances[recipient].add(amount);
 
         emit Transfer(sender, recipient, amount);
     }
 
     function setLock(uint256 amount, uint256 nonce, bytes memory signature) external {
         bytes32 digest = _hashTypedDataV4(keccak256(abi.encode(
-            keccak256("ClientLockAuthorization(uint256 amount, uint256 nonce)"),
+            keccak256("ClientLockAuthorization(uint256 amount,uint256 nonce)"),
+            amount,
             nonce
         )));
 
         address client = ECDSA.recover(digest, signature);
 
-        require(isUnlocked_(client));
-        require(nonces[nonce] == false);
+        require(isUnlocked_(client), "1");
+        require(nonces[nonce] == false, "2");
 
         nonces[nonce] = true;
         
@@ -135,7 +137,7 @@ contract HavaToken is IERC20, EIP712("HavaToken", "1.0.0") {
 
     function releaseLock(uint256 amount, uint256 nonce, bytes memory signature) external {        
         bytes32 digest = _hashTypedDataV4(keccak256(abi.encode(
-            keccak256("ClientTransferAuthorization(uint256 amount, uint256 nonce)"),
+            keccak256("ClientTransferAuthorization(uint256 amount,uint256 nonce)"),
             amount,
             nonce
         )));
