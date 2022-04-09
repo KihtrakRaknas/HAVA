@@ -9,8 +9,6 @@ import logo from "./ethereumLogo.png";
 import { addresses, abis } from "@my-app/contracts";
 import GET_TRANSFERS from "./graphql/subgraph";
 
-CONTRACT_ADDRESS = 
-
 function WalletButton() {
   const [rendered, setRendered] = useState("");
 
@@ -53,7 +51,7 @@ function App() {
   // Read more about useDapp on https://usedapp.io/
   const { error: contractCallError, value: tokenBalance } =
     useCall({
-       contract: new Contract(addresses.ceaErc20, abis.erc20),
+       contract: new Contract(addresses.havaToken, abis.hava),
        method: "balanceOf",
        args: ["0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
     }) ?? {};
