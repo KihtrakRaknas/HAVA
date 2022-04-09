@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Contract } from "@ethersproject/contracts";
-import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/core";
+import { formatEther } from '@ethersproject/units'
+import { shortenAddress, useCall, useEthers, useLookupAddress, useEtherBalance, useTokenBalance } from "@usedapp/core";
 import React, { useEffect, useState } from "react";
 
 import { Body, Button, Container, Header, Image, Link } from "./components";
@@ -51,27 +52,22 @@ function App() {
   const multiplier=1.0
   const [balance, setBalance] = useState("0.0")
   // Read more about useDapp on https://usedapp.io/
-  const { error: contractCallError, value: tokenBalance } =
-    useCall({
-       contract: new Contract(addresses.havaToken, abis.hava),
-       method: "balanceOf",
-       args: ["0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
-    }) ?? {};
+  // const { error: contractCallError, value: tokenBalance } =
+  //   useCall({
+  //      contract: new Contract(addresses.havaToken, abis.hava),
+  //      method: "balanceOf",
+  //      args: ["0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C"],
+  //   }) ?? {};
 
-  const { loading, error: subgraphQueryError, data } = useQuery(GET_TRANSFERS);
+  const { account } = useEthers()
+  const etherBalance = useEtherBalance(account)
+  console.log(etherBalance)
+  const daiBalance = useTokenBalance(addresses.havaToken, account)
 
-  useEffect(() => {
-    if (subgraphQueryError) {
-      console.error("Error while querying subgraph:", subgraphQueryError.message);
-      return;
-    }
-    if (!loading && data && data.transfers) {
-      console.log({ transfers: data.transfers });
-    }
-  }, [loading, subgraphQueryError, data]);
   const handleChange = (event) => {
     setBalance(parseFloat(event.target.value)*multiplier);
   };
+
   return (
     <Container>
       <Header>
@@ -90,6 +86,7 @@ function App() {
           padding: 20,
           borderRadius: 10,
         }}>
+          <p style={{color:"grey"}}>Max ETH: {etherBalance?formatEther(etherBalance):"Not connected"}</p>
         <div style={{display: 'flex',flexDirection: 'row', paddingBottom:30}}>
           <TextField id="outlined-basic" placeholder="0.0" variant="outlined" onChange={handleChange} />
           <p style={{paddingLeft: 10}}> ETH</p>
