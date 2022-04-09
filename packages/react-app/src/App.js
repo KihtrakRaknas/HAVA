@@ -4,14 +4,13 @@ import { shortenAddress, useCall, useEthers, useLookupAddress } from "@usedapp/c
 import React, { useEffect, useState } from "react";
 
 import { Body, Button, Container, Header, Image, Link } from "./components";
-import logo from "./ethereumLogo.png";
+import TextField from '@material-ui/core/TextField'
 
 import { addresses, abis } from "@my-app/contracts";
 import GET_TRANSFERS from "./graphql/subgraph";
 
-function WalletButton() {
+function WalletButton(props) {
   const [rendered, setRendered] = useState("");
-
   const ens = useLookupAddress();
   const { account, activateBrowserWallet, deactivate, error } = useEthers();
 
@@ -27,12 +26,13 @@ function WalletButton() {
 
   useEffect(() => {
     if (error) {
-      console.error("Error while connecting wallet:", error.message);
+      alert("Error while connecting wallet: "+error.message);
     }
   }, [error]);
 
   return (
     <Button
+    style={{backgroundColor: props.color}}
       onClick={() => {
         if (!account) {
           activateBrowserWallet();
@@ -48,6 +48,8 @@ function WalletButton() {
 }
 
 function App() {
+  const multiplier=1.0
+  const [balance, setBalance] = useState("0.0")
   // Read more about useDapp on https://usedapp.io/
   const { error: contractCallError, value: tokenBalance } =
     useCall({
@@ -67,23 +69,37 @@ function App() {
       console.log({ transfers: data.transfers });
     }
   }, [loading, subgraphQueryError, data]);
-
+  const handleChange = (event) => {
+    setBalance(parseFloat(event.target.value)*multiplier);
+  };
   return (
     <Container>
       <Header>
-        <WalletButton />
+        <WalletButton color="white"/>
       </Header>
-      <Body>
-        <Image src={logo} alt="ethereum-logo" />
-        <p>
-          Edit <code>packages/react-app/src/App.js</code> and save to reload.
-        </p>
-        <Link href="https://reactjs.org">
-          Learn React
-        </Link>
-        <Link href="https://usedapp.io/">Learn useDapp</Link>
-        <Link href="https://thegraph.com/docs/quick-start">Learn The Graph</Link>
-      </Body>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          alignSelf: 'center',
+          width: '20%',
+          height: '30%',
+          backgroundColor: 'white',
+          padding: 20,
+          borderRadius: 10,
+        }}>
+        <div style={{display: 'flex',flexDirection: 'row', paddingBottom:30}}>
+          <TextField id="outlined-basic" placeholder="0.0" variant="outlined" onChange={handleChange} />
+          <p style={{paddingLeft: 10}}> ETH</p>
+        </div>
+        <div style={{display: 'flex',flexDirection: 'row',paddingBottom:50, paddingLeft:10}}>
+        <TextField disabled defaultValue={balance} value={balance} variant="filled"/>
+          <p style={{paddingLeft: 10}}>HAVA</p>
+        </div>
+          <WalletButton color="#d9e6ff" textColor="#002c7d"/>
+        </div>
     </Container>
   );
 }
