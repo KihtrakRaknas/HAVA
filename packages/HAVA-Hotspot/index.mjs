@@ -55,15 +55,31 @@ app.post('/initialize', async (req, res) => {
     // setLock(uint256 amount, uint256 nonce, bytes memory signature)
     await contract.setLock(amount, nonce, signature).then(e => e.wait(5));
     
+    // TODO: Initialize
+    res.json({
+        dataUsed: 0,
+        dataLimit: 0,
+        initialized: true,
+        nonce: ''
+    });
+})
+
+app.post('/status', async (req, res) => {
+    // The body should be the signed message from the user
+    const { body } = req;
+    const { address } = body;
+
+    const balance = await contract.balanceOf(address);
+    
     // TODO: Send signature to the setLock function
     res.json({
         dataUsed: 0,
         dataLimit: 0,
-        initialized: false,
+        initialized: true,
         nonce: ''
     });
 })
 
 app.listen(port, () => {
-    console.log(`Listeni on port ${port}`)
+    console.log(`Listening on port ${port}`)
 })
