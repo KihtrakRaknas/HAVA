@@ -37,7 +37,7 @@ contract HavaToken is IERC20, EIP712("HavaToken", "1.0.0") {
     }
 
     function isUnlocked_(address tokenHolder) internal view returns(bool) {
-        return locked[tokenHolder].timestamp <= block.timestamp.add(60*60*24);
+        return locked[tokenHolder].timestamp.add(60*60*24) <= block.timestamp;
     }
 
 
