@@ -193,12 +193,12 @@ app.post('/updatePayment', async (req, res) => {
 
     console.log("amount", amount, "balance", balance)
     console.log("nonce", nonce, "nonces[address]", nonces[address])
-    console.log("amount > balance", BigNumber(amount).gt(balance))
+    console.log("amount > balance", BigNumber.from(amount).gt(balance))
     console.log("nonces[address] != nonce", nonces[address] != nonce)
     console.log("signedPayments[address]", signedPayments[address])
     console.log("signedPayments[address] && signedPayments[address][0] >= amount", signedPayments[address] && signedPayments[address][0] >= amount)
 
-    if(BigNumber(amount).gt(balance) || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
+    if(BigNumber.from(amount).gt(balance) || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
         console.log(`${chalk.red.bold("FAILED:")} Additional payment from ${chalk.underline(address)} failed because fraud was detected.`);
         return res.json({
             success: false
