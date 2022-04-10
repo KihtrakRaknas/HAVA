@@ -56,8 +56,8 @@ let shouldUploadLocation = readline.question(`Would you like to upload your rout
 
 if(shouldUploadLocation){
     let locationObj = {latitude: null, longitude: null}
-    locationObj[latitude] = readline.question(`Please enter your ${chalk.bold.blue('latitude')}: `)
-    locationObj[longitude] = readline.question(`Please enter your ${chalk.bold.blue('longitude')}: `)
+    locationObj["latitude"] = readline.question(`Please enter your ${chalk.bold.blue('latitude')}: `)
+    locationObj["longitude"] = readline.question(`Please enter your ${chalk.bold.blue('longitude')}: `)
     fetch('https://cockroachapp.herokuapp.com/upload',{
         method: 'POST',
         headers: {
