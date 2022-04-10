@@ -191,6 +191,13 @@ app.post('/updatePayment', async (req, res) => {
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     const balance = balances[address]
 
+    console.log("amount", amount, "balance", balance)
+    console.log("nonce", nonce, "nonces[address]", nonces[address])
+    console.log("amount > balance", amount > balance)
+    console.log("nonces[address] != nonce", nonces[address] != nonce)
+    console.log("signedPayments[address]", signedPayments[address])
+    console.log("signedPayments[address] && signedPayments[address][0] >= amount", signedPayments[address] && signedPayments[address][0] >= amount)
+
     if(amount > balance || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
         console.log(`${chalk.red.bold("FAILED:")} Additional payment from ${chalk.underline(address)} failed because fraud was detected.`);
         return res.json({
