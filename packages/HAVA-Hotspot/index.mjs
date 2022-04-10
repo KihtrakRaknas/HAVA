@@ -73,7 +73,7 @@ const provider = new ethers.providers.JsonRpcProvider(`https://rinkeby.infura.io
 
 let signer = new ethers.Wallet(privateKey, provider);
 
-const contract = new ethers.Contract("0x20A9C8CFb9Db9990B0E0647Db601e95169244630", havaAbi, provider).connect(signer);
+const contract = new ethers.Contract("0x5F5D95aD138e85C84B2c695081A0b685224f8F66", havaAbi, provider).connect(signer);
 
 console.log(`Server wallet address is ${chalk.underline(signer.address)}`)
 

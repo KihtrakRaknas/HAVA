@@ -1,5 +1,5 @@
 const addresses = {
-  havaToken: "0x20A9C8CFb9Db9990B0E0647Db601e95169244630",
+  havaToken: "0x5F5D95aD138e85C84B2c695081A0b685224f8F66",
 };
 
 

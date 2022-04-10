@@ -24,10 +24,10 @@ export const Button = styled.button`
 `;
 
 export const Container = styled.div`
-background: linear-gradient(#cf595a, #7479b8);
+  //background: linear-gradient(#cf595a, #7479b8);
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  margin-bottom: 60px;
 `;
 
 export const Header = styled.header`

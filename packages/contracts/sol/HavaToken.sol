@@ -80,6 +80,7 @@ contract HavaToken is IERC20, EIP712("HavaToken", "1.0.0") {
         require(balances[msg.sender] >= amount);
 
         balances[msg.sender] = balances[msg.sender].sub(amount);
+        balances[recipient] = balances[recipient].add(amount);
 
         emit Transfer(msg.sender, recipient, amount);
 
