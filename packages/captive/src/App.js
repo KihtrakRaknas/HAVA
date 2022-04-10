@@ -256,11 +256,11 @@ function App() {
 
         {initialized ? (
           <>
-            <MainContainerWithProgress max={dataLimit / 1024} value={(dataUsed / 1024) / 1024}>
+            <MainContainerWithProgress max={dataLimit / 1024} value={dataUsed / 1024}>
               <h1>You are <GradientText>connected</GradientText></h1>
 
               <p>
-                You have used {humanFileSize(dataUsed)} of the {dataLimit / 1024} MB.
+                You have used {humanFileSize(dataUsed * 1024)} of the {dataLimit / 1024} MB.
               </p>
             </MainContainerWithProgress>
 

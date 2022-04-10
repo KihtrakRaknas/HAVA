@@ -291,7 +291,7 @@ setInterval(() => {
         }
 
         if (balances[walletAddr] &&
-            balances[walletAddr][0] > pricePerMB * (Number(state.download_this_session) + Number(state.upload_this_session)) / 4096) {
+            balances[walletAddr][0] > pricePerMB * (Number(state.download_this_session) + Number(state.upload_this_session)) / 1024) {
             deauth(ip);
             return;
         }
