@@ -94,6 +94,14 @@ app.post('/initialize', async (req, res) => {
     // The body should be the signed message from the user
     const {body} = req;
     const {amount, nonce, signature} = body;
+
+    const types = {
+        ClientLockAuthorization: [
+            {name: 'amount', type: 'uint256'},
+            {name: 'nonce', type: 'uint256'}
+        ]
+    };
+
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     console.log({amount, nonce, signature});
 
@@ -117,19 +125,14 @@ app.post('/initialize', async (req, res) => {
             error: e.message
         });
     }
-
-    const types = {
-        ClientLockAuthorization: [
-            {name: 'amount', type: 'uint256'},
-            {name: 'nonce', type: 'uint256'}
-        ]
-    };
-
     
     ipAddressWalletMap.set(req.ip, address);
 
     const timestamp = transaction.timestamp
     lockTimestamps[address] = timestamp;
+
+    console.log("Transaction timestamp: ", transaction.timestamp);
+    console.log("Date.now(): ", (new Date()).getSeconds());
 
     const secondsTillTimeout = 60 * (60 - 1) - (new Date().getTime()/1000 - timestamp)
     // Try to cash out right before the lock expires
