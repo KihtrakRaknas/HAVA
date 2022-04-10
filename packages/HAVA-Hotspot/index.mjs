@@ -43,7 +43,7 @@ if (initialPaymentCost = readline.question(initialPaymentQuestion))
 if(!initialPaymentCost)
     initialPaymentCost = 1
 
-const pricePerMBQuestion = `The client ${chalk.green("pay")} by the MB. Type a whole number to ${chalk.red('change')} the price per MB (default: ${chalk.green("1 HAVA/MB")}): `
+const pricePerMBQuestion = `The client ${chalk.green("pays")} by the MB. Type a whole number to ${chalk.red('change')} the price per MB (default: ${chalk.green("1 HAVA/MB")}): `
 let pricePerMB
 if (pricePerMB = readline.question(pricePerMBQuestion))
     // pricePerMB need to be a positive whole number
@@ -52,7 +52,7 @@ if (pricePerMB = readline.question(pricePerMBQuestion))
 if(!pricePerMB)
     pricePerMB = 1
 
-// TODO: Send pricePerMB and IntialPrice to UI
+let shouldUploadLocation = readline.question(`Would you like to upload your router's location to the ${chalk.bold.blue('HAVA Hotspot')}App? (${chalk.bold.green('Y')}/${chalk.bold.red('n')})`) != 'n'
 
 const infuraProjectId = "239ff2f143084d0f957c39a01c46998e";
 const provider = new ethers.providers.JsonRpcProvider(`https://rinkeby.infura.io/v3/${infuraProjectId}`);
@@ -134,7 +134,7 @@ app.post('/initialize', async (req, res) => {
 app.post('/status', async (req, res) => {
     const {body} = req;
     const {address} = body;
-    const amountAlreadyPaid = signedPayments[address] ? 0 : signedPayments[address][0]
+    const amountAlreadyPaid = signedPayments[address] ? signedPayments[address][0] : 0
 
     let dataUsed = 0;
     if (clientStateMap.has(address)) {
@@ -234,3 +234,8 @@ setInterval(() => {
 
     clientStateMap = newStateMap;
 }, 1000);
+
+
+if(shouldUploadLocation){
+    
+}
