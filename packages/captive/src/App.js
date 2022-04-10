@@ -21,6 +21,7 @@ function useServerStatus() {
     dataUsed: 0,
     dataLimit: 0,
     initialized: false,
+    amountAlreadyPaid: 0,
     nonce: localStorage.getItem("nonce")
   }
   const [pricePerMB, setPricePerMB] = useState(1);
@@ -118,7 +119,7 @@ const types = {
 function App() {
   const {account, library} = useEthers();
 
-  const {dataUsed, dataLimit, initialized, nonce, pricePerMB, initializationPrice} = useServerStatus();
+  const {dataUsed, dataLimit, initialized, nonce, pricePerMB, amountAlreadyPaid, initializationPrice} = useServerStatus();
 
   const [modalState, setModalState] = useState('closed');
   const [error, setError] = useState("");
@@ -251,7 +252,7 @@ function App() {
 
               {account ? (
                 <StyledButton theme="primary"
-                              onClick={() => signRequest(pricePerMB * MbToBuy, "updatePayment")}>
+                              onClick={() => signRequest(pricePerMB * (amountAlreadyPaid + MbToBuy), "updatePayment")}>
                   Add data ({pricePerMB * MbToBuy} HAVA)
                 </StyledButton>) : <WalletButton/>}
             </MainContainer>

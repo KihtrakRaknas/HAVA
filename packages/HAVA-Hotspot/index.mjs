@@ -175,6 +175,7 @@ app.post('/status', async (req, res) => {
         pricePerMB,
         initialPaymentCost,
         dataLimit,
+        amountAlreadyPaid,
         initialized: checkIfLocked(address),
     });
 })
@@ -242,10 +243,12 @@ async function cashInPayment(ip, address) {
 }
 
 function deauth(ipAddress) {
+    console.log("deauthing", ipAddress)
     spawnSync( 'sudo', ['ndsctl', 'deauth', ipAddress]);
 }
 
 function auth(ipAddress) {
+    console.log("authing", ipAddress)
     spawnSync( 'sudo', ['ndsctl', 'auth', ipAddress]);
 }
 
