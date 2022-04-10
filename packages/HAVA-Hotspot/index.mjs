@@ -94,9 +94,11 @@ app.post('/initialize', async (req, res) => {
     // The body should be the signed message from the user
     const {body} = req;
     const {amount, nonce, signature} = body;
+    const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     console.log({amount, nonce, signature});
 
     if (amount != initialPaymentCost) {
+        console.log(`${chalk.red.bold("FAILED:")} Initial payment from ${chalk.underline(address)} was for the incorrect am ount.`);
         return res.json({
             initialized: false
         });
@@ -108,6 +110,8 @@ app.post('/initialize', async (req, res) => {
     try {
         transaction = await contract.setLock(amount, nonce, signature).then(e => e.wait(1));
     } catch (e) {
+        console.log(`${chalk.red.bold("FAILED:")} Initial transaction for ${chalk.underline(address)} could not complete successfully.`);
+        console.log(e)
         return res.json({
             initialized: false,
             error: e.message
@@ -121,7 +125,7 @@ app.post('/initialize', async (req, res) => {
         ]
     };
 
-    const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
+    
     ipAddressWalletMap.set(req.ip, address);
 
     const timestamp = transaction.timestamp
@@ -136,6 +140,8 @@ app.post('/initialize', async (req, res) => {
 
     // Save the nonce to validate future transactions
     nonces[address] = nonce;
+
+    console.log(`${chalk.green.bold("SUCCESS:")} Initial transaction for ${chalk.underline(address)} initialized successfully. ${chalk.green.bold(amount+" HAVA")} has been sent to your wallet!`);
 
     res.json({
         dataUsed: 0,
