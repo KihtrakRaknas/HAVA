@@ -251,7 +251,7 @@ function App() {
 
               {account ? (
                 <StyledButton theme="primary"
-                              onClick={() => signRequest(pricePerMB * 5, "updatePayment")}>
+                              onClick={() => signRequest(pricePerMB * MbToBuy, "updatePayment")}>
                   Add data ({pricePerMB * MbToBuy} HAVA)
                 </StyledButton>) : <WalletButton/>}
             </MainContainer>
