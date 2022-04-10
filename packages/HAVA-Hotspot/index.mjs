@@ -177,6 +177,8 @@ app.post('/status', async (req, res) => {
         dataLimit,
         amountAlreadyPaid,
         initialized: checkIfLocked(address),
+        clientStateMap,
+        a: clientStateMap.get(address)
     });
 })
 
