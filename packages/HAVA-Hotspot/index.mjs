@@ -131,7 +131,7 @@ app.post('/initialize', async (req, res) => {
     const timestamp = transaction.timestamp
     lockTimestamps[address] = timestamp;
 
-    const secondsTillTimeout = 60 * (60 - 1) - (new Date().getSeconds() - timestamp)
+    const secondsTillTimeout = 60 * (60 - 1) - (new Date().getTime()/1000 - timestamp)
     // Try to cash out right before the lock expires
     setTimeout(() => cashInPayment(req.ip, ), secondsTillTimeout * 1000)
 
@@ -206,7 +206,7 @@ app.listen(port, () => {
 })
 
 function checkIfLocked(address) {
-    const diff = new Date().getSeconds() - lockTimestamps[address]
+    const diff = new Date().getTime()/1000 - lockTimestamps[address]
     return (diff < 60 * (60 - 1))
 }
 
