@@ -17,9 +17,6 @@ function useWindowLocation() {
 }
 
 function useServerStatus() {
-  if (!localStorage.getItem("nonce")) {
-      localStorage.setItem("nonce", Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString())
-  }
   const defaultObj = {
     dataUsed: 0,
     dataLimit: 0,
@@ -132,6 +129,9 @@ function App() {
   console.log(routerAddress)
 
   const signRequest = useCallback((amount, nonce, endpoint) => {
+    if(endpoint == "initialize")
+      localStorage.setItem("nonce", Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString())
+    let nonce = localStorage.getItem("nonce")
     // console.log(account)
     if (account)
       setModalState('signConfirmation');
