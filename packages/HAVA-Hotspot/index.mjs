@@ -270,7 +270,7 @@ setInterval(() => {
     console.log(clientStateMap.keys());
 
     Object.values(parsed.clients).forEach(client => {
-        newStateMap.set(client.ip, client.state);
+        newStateMap.set(client.ip, client);
     });
 
     // TODO: cashInPayment for all clients that are in clientStateMap but not in newStateMap
