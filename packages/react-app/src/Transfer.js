@@ -50,7 +50,7 @@ function WalletButton(props) {
     );
 }
 
-function App() {
+export default function App() {
     const multiplier = {
         "ETH": 10000000,
         "HAVA": 1/10000000

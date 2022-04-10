@@ -1,6 +1,7 @@
 {
   "name": "@my-app/react-app",
   "version": "1.0.0",
+  "homepage": "https://hava.kihtrak.com",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -54,6 +55,8 @@
     "eject": "react-scripts eject",
     "ipfs": "yarn build && ipfs-deploy build/",
     "start": "react-scripts start",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   }
 }
