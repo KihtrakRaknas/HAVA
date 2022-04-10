@@ -22,7 +22,7 @@ function useServerStatus() {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            fetch("https://api.my-app.com/status").then(res => res.json()).then(json => json ? setResponse(json) : defaultObj).catch(() => setResponse(defaultObj));
+            fetch(window.location.protocol + window.location.hostname + '3999').then(res => res.json()).then(json => json ? setResponse(json) : defaultObj).catch(() => setResponse(defaultObj));
         }, 1000);
         return () => clearInterval(interval);
     });
