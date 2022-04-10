@@ -1,14 +1,13 @@
-import React, { useRef, useEffect } from 'react';
-import { useLocation, Switch } from 'react-router-dom';
+import React from 'react';
+import {Switch} from 'react-router-dom';
 import AppRoute from './utils/AppRoute';
-import ScrollReveal from './utils/ScrollReveal';
-import Transfer from './Transfer'
 // Layouts
 import LayoutDefault from './layouts/LayoutDefault';
-import { createBrowserHistory } from "history";
+import {createBrowserHistory} from "history";
 import {DAppProvider, Mainnet, Rinkeby} from "@usedapp/core";
-// Views 
+// Views
 import Home from './views/Home';
+
 import('./assets/scss/style.scss');
 
 const history = createBrowserHistory();
@@ -23,20 +22,12 @@ const config = {
 }
 
 const App = () => {
-  const TransferPage = ()=>{
-    return (<DAppProvider config={config}>
-      <Transfer/>
-  </DAppProvider>)
-  }
-
-
   return (
-
+      <DAppProvider config={config}>
         <Switch>
           <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
-          <AppRoute exact path="/transfer" component={TransferPage} />
         </Switch>
-      
+      </DAppProvider>
   );
 }
 

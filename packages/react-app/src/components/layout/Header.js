@@ -112,7 +112,7 @@ const Header = ({
                       navPosition && `header-nav-${navPosition}`
                     )}>
                     <li>
-                      <Link to="/transfer" lassName="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Exchange</Link>
+                      <Link to="/transfer" className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Exchange</Link>
                     </li>
                   </ul>
                 </div>
