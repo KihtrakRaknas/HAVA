@@ -103,7 +103,7 @@ app.post('/initialize', async (req, res) => {
     };
 
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
-    console.log({amount, nonce, signature});
+    // console.log({amount, nonce, signature});
 
     if (amount != initialPaymentCost) {
         console.log(`${chalk.red.bold("FAILED:")} Initial payment from ${chalk.underline(address)} was for the incorrect amount.`);
@@ -132,8 +132,8 @@ app.post('/initialize', async (req, res) => {
 
     lockTimestamps[address] = timestamp;
 
-    console.log("timestamp: ", timestamp);
-    console.log("Date.now(): ", (new Date()).getSeconds());
+    // console.log("timestamp: ", timestamp);
+    // console.log("Date.now(): ", (new Date().getTime()/1000));
 
     const secondsTillTimeout = 60 * (60 - 1) - (new Date().getTime()/1000 - timestamp)
     // Try to cash out right before the lock expires
