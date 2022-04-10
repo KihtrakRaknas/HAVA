@@ -13,7 +13,7 @@ import {Alert} from "./components/Alert/Alert";
 import {MainContainerWithProgress} from "./components/MainContainerWithProgress/MainContainerWithProgress";
 
 function useWindowLocation() {
-  return window.location.protocol + '//' + window.location.hostname + ':4000';
+  return window.location.protocol + '//' + window.location.hostname + ':8888';
 }
 
 function useServerStatus() {

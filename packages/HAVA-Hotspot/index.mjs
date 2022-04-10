@@ -16,7 +16,7 @@ app.use(express.static('public'));
 app.use(cors());
 app.use(bodyParser.json());
 
-const port = 4000;
+const port = 8888;
 
 let privateKey = null
 try {
@@ -237,5 +237,5 @@ setInterval(() => {
 
 
 if(shouldUploadLocation){
-    
+
 }
