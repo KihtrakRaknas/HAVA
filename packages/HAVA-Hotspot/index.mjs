@@ -267,9 +267,9 @@ setInterval(() => {
         return
     }
 
-    console.log(newStateMap.keys());
 
     let newStateMap = new Map();
+    console.log(clientStateMap.keys());
 
     Object.values(parsed.clients).forEach(client => {
         newStateMap.set(client.ip, client.state);
