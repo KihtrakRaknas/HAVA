@@ -263,8 +263,11 @@ setInterval(() => {
         ls = spawnSync( 'sudo', ['ndsctl', 'json']);
         parsed = JSON.parse(ls.stdout.toString());
     } catch(e) {
+        console.error(e);
         return
     }
+
+    console.log(newStateMap.keys());
 
     let newStateMap = new Map();
 
