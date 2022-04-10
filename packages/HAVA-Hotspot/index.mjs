@@ -12,7 +12,7 @@ const { spawnSync } = require( 'child_process' );
 const havaAbi = require('./hava.json');
 
 const app = express();
-app.use(express.static('public'));
+app.use(express.static('../captive/build'));
 app.use(cors());
 app.use(bodyParser.json());
 
