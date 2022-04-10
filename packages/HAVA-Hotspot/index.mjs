@@ -219,8 +219,15 @@ let clientStateMap = new Map();
 
 // TODO: Check the json file to see if client has disconnect, call the cashInPayment function if so
 setInterval(() => {
-    const ls = spawnSync( 'sudo', ['ndsctl', 'json']);
-    const parsed = JSON.parse(ls.stdout.toString());
+    let ls; 
+    let parsed; 
+
+    try {
+        ls = spawnSync( 'sudo', ['ndsctl', 'json']);
+        parsed = JSON.parse(ls.stdout.toString());
+    } catch(e) {
+        return
+    }
 
     let newStateMap = new Map();
 
