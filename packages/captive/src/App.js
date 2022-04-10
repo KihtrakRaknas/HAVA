@@ -128,7 +128,7 @@ function App() {
 
   console.log(routerAddress)
 
-  const signRequest = useCallback((amount, nonce, endpoint) => {
+  const signRequest = useCallback((amount, endpoint) => {
     if(endpoint == "initialize")
       localStorage.setItem("nonce", Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString())
     let nonce = localStorage.getItem("nonce")
@@ -224,7 +224,7 @@ function App() {
 
             {account ? (
               <StyledButton theme="primary"
-                            onClick={() => signRequest(initializationPrice, null, "initialize")}>
+                            onClick={() => signRequest(initializationPrice, "initialize")}>
                 Initialize Connection ({initializationPrice} HAVA)
               </StyledButton>
             ) : <WalletButton/>}
@@ -251,7 +251,7 @@ function App() {
 
               {account ? (
                 <StyledButton theme="primary"
-                              onClick={() => signRequest(pricePerMB * 5, nonce, "updatePayment")}>
+                              onClick={() => signRequest(pricePerMB * 5, "updatePayment")}>
                   Add data ({pricePerMB * MbToBuy} HAVA)
                 </StyledButton>) : <WalletButton/>}
             </MainContainer>
