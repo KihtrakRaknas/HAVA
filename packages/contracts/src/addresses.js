@@ -1,6 +1,5 @@
-// This address points to a dummy ERC-20 contract. Replace it with your own smart contracts.
 const addresses = {
-  havaToken: "0x7b41393CFd257394d60153D7b09498fC0DCBeE10",
+  havaToken: "0x20A9C8CFb9Db9990B0E0647Db601e95169244630",
 };
 
 
