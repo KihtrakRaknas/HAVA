@@ -95,6 +95,8 @@ app.post('/initialize', async (req, res) => {
     const {body} = req;
     const {amount, nonce, signature} = body;
 
+    console.log("/initialize", body);
+
     const types = {
         ClientLockAuthorization: [
             {name: 'amount', type: 'uint256'},
