@@ -1,15 +1,16 @@
-import { Rinkeby, shortenAddress, useEthers, useLookupAddress } from "@usedapp/core";
-import React, { useCallback, useEffect, useState } from "react";
+import {Rinkeby, shortenAddress, useEthers, useLookupAddress} from "@usedapp/core";
+import React, {useCallback, useEffect, useState} from "react";
 
-import { Body, BodyContainer, Button, Container, Header } from "./components";
+import {Body, Button, Container, Header, Input} from "./components";
 
-import { addresses } from "@my-app/contracts";
-import { GradientText } from "./components/GradientText/GradientText";
-import { MainContainer } from "./components/MainContainer/MainContainer";
-import { StyledButton } from "./components/StyledButton/StyledButton";
-import { GlowText } from "./components/GlowText/GlowText";
-import { Modal } from "./components/Modal/Modal";
-import { Alert } from "./components/Alert/Alert";
+import {addresses} from "@my-app/contracts";
+import {GradientText} from "./components/GradientText/GradientText";
+import {MainContainer} from "./components/MainContainer/MainContainer";
+import {StyledButton} from "./components/StyledButton/StyledButton";
+import {GlowText} from "./components/GlowText/GlowText";
+import {Modal} from "./components/Modal/Modal";
+import {Alert} from "./components/Alert/Alert";
+import {MainContainerWithProgress} from "./components/MainContainerWithProgress/MainContainerWithProgress";
 
 function useWindowLocation() {
   return window.location.protocol + '//' + window.location.hostname + ':4000';
@@ -26,7 +27,7 @@ function useServerStatus() {
   const [initializationPrice, setInitializationPrice] = useState(1);
 
   const [response, setResponse] = useState(defaultObj);
-  const { account } = useEthers();
+  const {account} = useEthers();
   const routerAddress = useWindowLocation()
   console.log(routerAddress);
 
@@ -38,7 +39,7 @@ function useServerStatus() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ address: account })
+        body: JSON.stringify({address: account})
       }).then(res => res.json())
         .then(json => {
           if (json) {
@@ -53,14 +54,14 @@ function useServerStatus() {
     return () => clearInterval(interval);
   });
 
-  return { ...response, pricePerMB, initializationPrice };
+  return {...response, pricePerMB, initializationPrice};
 }
 
 function WalletButton() {
   const [rendered, setRendered] = useState("");
 
   const ens = useLookupAddress();
-  const { account, activateBrowserWallet, deactivate, error } = useEthers();
+  const {account, activateBrowserWallet, error} = useEthers();
 
   useEffect(() => {
     if (ens) {
@@ -101,23 +102,23 @@ const domain = {
 const types = {
   updatePayment: {
     ClientTransferAuthorization: [
-      { name: 'amount', type: 'uint256' },
-      { name: 'nonce', type: 'uint256' }
+      {name: 'amount', type: 'uint256'},
+      {name: 'nonce', type: 'uint256'}
     ],
   },
   initialize: {
     ClientLockAuthorization: [
-      { name: 'amount', type: 'uint256' },
-      { name: 'nonce', type: 'uint256' }
+      {name: 'amount', type: 'uint256'},
+      {name: 'nonce', type: 'uint256'}
     ]
   }
 };
 
 // The data to sign
 function App() {
-  const { account, library } = useEthers();
+  const {account, library} = useEthers();
 
-  const { dataUsed, dataLimit, initialized, nonce, pricePerMB, initializationPrice } = useServerStatus();
+  const {dataUsed, dataLimit, initialized, nonce, pricePerMB, initializationPrice} = useServerStatus();
 
   const [modalState, setModalState] = useState('closed');
   const [error, setError] = useState("");
@@ -135,7 +136,7 @@ function App() {
     // console.log(account)
     if (account)
       setModalState('signConfirmation');
-    library.getSigner()._signTypedData(domain, types[endpoint], { amount, nonce }).then(signature => {
+    library.getSigner()._signTypedData(domain, types[endpoint], {amount, nonce}).then(signature => {
       // TODO: Send signed message to server
       fetch(routerAddress + '/' + endpoint, {
         method: 'POST',
@@ -143,10 +144,10 @@ function App() {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ amount, nonce, signature })
+        body: JSON.stringify({amount, nonce, signature})
       }).then(res => res.json())
         .then(json => {
-          if (json.initialized == false)
+          if (json.initialized === false)
             setModalState('failed');
           else
             setModalState('closed');
@@ -156,16 +157,16 @@ function App() {
       setModalState('closed');
       setError(err);
     });
-  }, [account, library]);
+  }, [account, library, routerAddress]);
 
   return (
     <Container>
       <Header>
-        <WalletButton />
+        <WalletButton/>
       </Header>
       <Body>
         <MainContainer>
-          <h1 style={{ fontSize: "68px" }}><GlowText>Hava</GlowText></h1>
+          <h1><GlowText>Hava</GlowText></h1>
           <h2>
             A <GradientText>decentralized</GradientText> and <GradientText>open</GradientText> internet for
             everyone.
@@ -217,37 +218,39 @@ function App() {
             </p>
 
             {account ? (
-              <StyledButton theme="primary" onClick={() => signRequest(initializationPrice, null, "initialize")}>
-                Initialize Connection (1 HAVA).
+              <StyledButton theme="primary"
+                            onClick={() => signRequest(initializationPrice, null, "initialize")}>
+                Initialize Connection ({initializationPrice} HAVA)
               </StyledButton>
-            ) : <WalletButton />}
+            ) : <WalletButton/>}
           </MainContainer>
         ) : null}
 
-        {!initialized ? (
-          <MainContainer>
-            <h1>You are <GradientText>connected</GradientText></h1>
+        {initialized ? (
+          <>
+            <MainContainerWithProgress max={dataLimit} value={dataUsed}>
+              <h1>You are <GradientText>connected</GradientText></h1>
 
-            <p>
-              You have used {dataUsed} MB of the {dataLimit} MB.
+              <p>
+                You have used {dataUsed} MB of the {dataLimit} MB.
+              </p>
+            </MainContainerWithProgress>
 
-              {dataLimit > 0 ? (
-                <>
-                  <meter min="0" max={5} value={2} />
-                </>
-              ) : null}
-            </p>
+            <MainContainer>
+              <h1>Purchase more data</h1>
+              <p>
+                Buy <Input type="number" value={MbToBuy} onChange={e => setMbToBuy(e.target.value)}
+                           min={1}/> MB
+                of data.
+              </p>
 
-            <p>
-              Buy <input type="number" value={MbToBuy} onChange={e => setMbToBuy(e.target.value)} min={1} /> MB of data
-            </p>
-
-            {account ? (
-              <StyledButton theme="primary" onClick={() => signRequest(pricePerMB * 5, nonce, "updatePayment")}>
-                Add data ({pricePerMB * MbToBuy} HAVA)
-              </StyledButton>
-            ) : <WalletButton />}
-          </MainContainer>
+              {account ? (
+                <StyledButton theme="primary"
+                              onClick={() => signRequest(pricePerMB * 5, nonce, "updatePayment")}>
+                  Add data ({pricePerMB * MbToBuy} HAVA)
+                </StyledButton>) : <WalletButton/>}
+            </MainContainer>
+          </>
         ) : null}
       </Body>
     </Container>

@@ -1,0 +1,21 @@
+.container {
+    border-radius: 8px;
+    padding: 8px 20px 20px;
+    background: rgb(33, 36, 41);
+    width: min(90vw, 700px);
+}
+
+.mainContainer {
+    position: relative;
+    margin: 0 auto 16px;
+}
+
+.progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: block;
+    height: 4px;
+    background: #f861f8;
+}

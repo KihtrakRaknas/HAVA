@@ -61,3 +61,12 @@ export const Link = styled.a.attrs({
   color: #61dafb;
   margin-top: 8px;
 `;
+
+export const Input = styled.input`
+  width: 50px;
+  text-align: center;
+  background: white;
+  font-size: 16px;
+  border: none;
+  margin: 0 2px;
+`;
