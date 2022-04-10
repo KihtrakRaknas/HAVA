@@ -269,7 +269,7 @@ setInterval(() => {
 
 
     let newStateMap = new Map();
-    console.log(clientStateMap);
+    // console.log(clientStateMap);
 
     Object.values(parsed.clients).forEach(client => {
         newStateMap.set(client.ip, client);
@@ -281,6 +281,8 @@ setInterval(() => {
         if (!walletAddr) {
             return;
         }
+
+        console.log(ip, state.download_this_session + state.upload_this_session)
 
         if (!newStateMap.has(ip)) {
             cashInPayment(ip, walletAddr);
