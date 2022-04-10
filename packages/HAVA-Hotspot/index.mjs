@@ -268,11 +268,11 @@ setInterval(() => {
     }
 
 
-    // let newStateMap = new Map();
-    console.log(clientStateMap.keys());
+    let newStateMap = new Map();
+    console.log(clientStateMap);
 
     Object.values(parsed.clients).forEach(client => {
-        clientStateMap.set(client.ip, client);
+        newStateMap.set(client.ip, client);
     });
 
     // TODO: cashInPayment for all clients that are in clientStateMap but not in newStateMap
@@ -282,10 +282,10 @@ setInterval(() => {
             return;
         }
 
-        // if (!newStateMap.has(ip)) {
-        //     cashInPayment(ip, walletAddr);
-        //     return;
-        // }
+        if (!newStateMap.has(ip)) {
+            cashInPayment(ip, walletAddr);
+            return;
+        }
 
         if (balances[walletAddr][0] * pricePerMB * 1024 > state.download_this_session + state.upload_this_session) {
             deauth(ip);
@@ -293,5 +293,5 @@ setInterval(() => {
         }
     });
 
-    // clientStateMap = newStateMap;
+    clientStateMap = newStateMap;
 }, 1000);
