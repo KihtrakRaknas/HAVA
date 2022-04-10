@@ -20,7 +20,6 @@ function useServerStatus() {
   if (!localStorage.getItem("nonce")) {
       localStorage.setItem("nonce", Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString())
   }
-  localStorage
   const defaultObj = {
     dataUsed: 0,
     dataLimit: 0,
