@@ -121,10 +121,14 @@ export default function Transfer() {
                 <TransferInputField currencyName={"ethereum"} balance={etherBalance} symbol={"ETH"} decimals={decimals}
                                     value={conversionBalance} setValue={setConversionBalance}/>
 
+                <div style={{height: "10px"}} />
+
                 <Button style={{padding: 5, backgroundColor: "#ededed"}} onClick={() => {
                     setConversionBalance("0")
                     setCurrentCurrency((currentCurrency === "HAVA") ? "ETH" : "HAVA");
                 }}>↑↓ Reverse Direction</Button>
+
+                <div style={{height: "10px"}} />
 
                 <TransferInputField currencyName={"HAVA"} balance={havaBalance} decimals={0}
                                     symbol={"HAVA"} value={conversionAmount.toString()} setValue={() => {
