@@ -9,7 +9,6 @@ const HDWalletProvider = require("@truffle/hdwallet-provider");
 
 const port = 4000;
 
-
 const infuraProjectId = "239ff2f143084d0f957c39a01c46998e";
 const provider = new Web3.providers.HttpProvider(`https://mainnet.infura.io/v3/${infuraProjectId}`);
 
