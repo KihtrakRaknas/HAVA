@@ -163,8 +163,8 @@ app.post('/status', async (req, res) => {
     const amountAlreadyPaid = signedPayments[address] ? signedPayments[address][0] : 0
 
     let dataUsed = 0;
-    if (clientStateMap.has(address)) {
-        const clientState = clientStateMap.get(address);
+    if (clientStateMap.has(req.ip)) {
+        const clientState = clientStateMap.get(req.ip);
         dataUsed = clientState.download_this_session + clientState.upload_this_session;
     }
 
