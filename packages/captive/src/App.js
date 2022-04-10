@@ -17,11 +17,15 @@ function useWindowLocation() {
 }
 
 function useServerStatus() {
+  if (!localStorage.getItem("nonce")) {
+      localStorage.setItem("nonce", Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString())
+  }
+  localStorage
   const defaultObj = {
     dataUsed: 0,
     dataLimit: 0,
     initialized: false,
-    nonce: ''
+    nonce: localStorage.getItem("nonce")
   }
   const [pricePerMB, setPricePerMB] = useState(1);
   const [initializationPrice, setInitializationPrice] = useState(1);
@@ -129,10 +133,6 @@ function App() {
   console.log(routerAddress)
 
   const signRequest = useCallback((amount, nonce, endpoint) => {
-    if (!nonce) {
-      // generate random nonce uint128
-      nonce = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
-    }
     // console.log(account)
     if (account)
       setModalState('signConfirmation');
@@ -158,6 +158,12 @@ function App() {
       setError(err);
     });
   }, [account, library, routerAddress]);
+
+  useEffect(() => {
+    if (modalState === 'waitingForConfirmation' && initialized) {
+      setModalState('closed');
+    }
+  }, [modalState, initialized]);
 
   return (
     <Container>
