@@ -24,6 +24,7 @@ const Hero = ({
   invertColor,
   ...props
 }) => {
+  // import('../assets/scss/style.scss');
 
   const [videoModalActive, setVideomodalactive] = useState(false);
 

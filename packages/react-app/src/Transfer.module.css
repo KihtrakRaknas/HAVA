@@ -1,0 +1,20 @@
+.container {
+    background-color: red;
+    border: 1px solid black;
+    width: 120px;
+    height: 120px;
+}
+
+.currencyName {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.balance {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+}

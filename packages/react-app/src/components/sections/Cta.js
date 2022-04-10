@@ -53,7 +53,7 @@ const Cta = ({
         >
           <div className="cta-slogan">
             <h3 className="m-0">
-              For previewing layouts and visual?
+              Keep up to date and get the latest news
               </h3>
           </div>
           <div className="cta-action">

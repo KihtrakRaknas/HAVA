@@ -9,6 +9,7 @@ import { createBrowserHistory } from "history";
 import {DAppProvider, Mainnet, Rinkeby} from "@usedapp/core";
 // Views 
 import Home from './views/Home';
+import('./assets/scss/style.scss');
 
 const history = createBrowserHistory();
 // Change this to your own Infura project id: https://infura.io/register
@@ -27,23 +28,15 @@ const App = () => {
       <Transfer/>
   </DAppProvider>)
   }
-  const childRef = useRef();
-  let location = useLocation();
 
-  useEffect(() => {
-    document.body.classList.add('is-loaded')
-    childRef.current.init();
-  }, [location]);
 
   return (
-    <ScrollReveal
-      ref={childRef}
-      children={() => (
+
         <Switch>
           <AppRoute exact path="/" component={Home} layout={LayoutDefault} />
           <AppRoute exact path="/transfer" component={TransferPage} />
         </Switch>
-      )} />
+      
   );
 }
 

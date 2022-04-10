@@ -1,4 +1,3 @@
-import {useQuery} from "@apollo/client";
 import {Contract} from "@ethersproject/contracts";
 import {formatEther, formatUnits, parseEther} from '@ethersproject/units'
 import {shortenAddress, useCall, useEthers, useLookupAddress, useEtherBalance, useTokenBalance, useContractFunction} from "@usedapp/core";
@@ -9,8 +8,10 @@ import TextField from '@material-ui/core/TextField'
 import {BigNumberInput} from "big-number-input";
 import { utils } from 'ethers';
 
+import {TransferInputField} from "./components/TransferInputField/TransferInputField";
+import styles from "./Transfer.module.css";
+
 import {addresses, abis} from "@my-app/contracts";
-import GET_TRANSFERS from "./graphql/subgraph";
 
 const BigInt = window.BigInt;
 
@@ -50,7 +51,7 @@ function WalletButton(props) {
     );
 }
 
-export default function App() {
+export default function Transfer() {
     const multiplier = {
         "ETH": 10000000,
         "HAVA": 1/10000000
@@ -64,7 +65,6 @@ export default function App() {
     const [conversionBalance, setConversionBalance] = useState("0")
 
     const decimals = currentCurrency === "ETH" ? 18 : 0;
-
 
     const {account, activateBrowserWallet} = useEthers()
     const etherBalance = useEtherBalance(account)
@@ -121,6 +121,7 @@ export default function App() {
                 <p style={{color: "grey"}}>
                     Max ETH: {etherBalance ? formatEther(etherBalance) : "Not connected"}
                 </p>
+                {/* <TransferInputField currencyName={"ethereum"} balance={"1.000"}/> */}
                 <div style={{display: 'flex', flexDirection: 'row'}}>
                     <BigNumberInput decimals={decimals} value={conversionBalance} onChange={setConversionBalance}
                                     renderInput={(props) => (
