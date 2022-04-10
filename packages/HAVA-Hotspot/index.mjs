@@ -180,6 +180,14 @@ app.post('/status', async (req, res) => {
 app.post('/updatePayment', async (req, res) => {
     const {body} = req;
     const {amount, nonce, signature} = body;
+
+    const types = {
+        ClientTransferAuthorization: [
+            {name: 'amount', type: 'uint256'},
+            {name: 'nonce', type: 'uint256'}
+        ]
+    };
+
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     const balance = balances[address]
 
