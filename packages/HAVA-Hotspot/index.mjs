@@ -128,10 +128,11 @@ app.post('/initialize', async (req, res) => {
     
     ipAddressWalletMap.set(req.ip, address);
 
-    const timestamp = transaction.timestamp
+    const timestamp = (await provider.getBlock(transaction.blockNumber)).timestamp;
+
     lockTimestamps[address] = timestamp;
 
-    console.log("Transaction timestamp: ", transaction.timestamp);
+    console.log("timestamp: ", timestamp);
     console.log("Date.now(): ", (new Date()).getSeconds());
 
     const secondsTillTimeout = 60 * (60 - 1) - (new Date().getTime()/1000 - timestamp)
