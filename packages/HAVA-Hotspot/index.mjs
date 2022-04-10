@@ -185,6 +185,12 @@ app.post('/updatePayment', async (req, res) => {
 
     if(amount > balance || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
         console.log(`${chalk.red.bold("FAILED:")} Additional payment from ${chalk.underline(address)} failed because fraud was detected.`);
+        if(amount > balance)
+            console.log("User out of funds")
+        if(nonces[address] != nonce)
+            console.log("Nonces don't match")
+        if(signedPayments[address] && signedPayments[address][0] >= amount)
+            console.log("User did not increase the amount they are willing to pay")
         return res.json({
             success: false
         });
