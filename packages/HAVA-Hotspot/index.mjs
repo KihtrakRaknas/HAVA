@@ -98,7 +98,7 @@ app.post('/initialize', async (req, res) => {
     console.log({amount, nonce, signature});
 
     if (amount != initialPaymentCost) {
-        console.log(`${chalk.red.bold("FAILED:")} Initial payment from ${chalk.underline(address)} was for the incorrect am ount.`);
+        console.log(`${chalk.red.bold("FAILED:")} Initial payment from ${chalk.underline(address)} was for the incorrect amount.`);
         return res.json({
             initialized: false
         });
@@ -179,14 +179,22 @@ app.post('/updatePayment', async (req, res) => {
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     const balance = balances[address]
 
-    if(amount > balance || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount))
+    if(amount > balance || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
+        console.log(`${chalk.red.bold("FAILED:")} Additional payment from ${chalk.underline(address)} failed because fraud was detected.`);
         return res.json({
             success: false
         });
+    }
+
+    let additionalPayment = amount
+    if(signedPayments[address])
+        additionalPayment = amount - signedPayments[address][0]
 
     signedPayments[address] = [amount, nonce, signature];
 
     auth(req.ip);
+
+    console.log(`${chalk.green.bold("SUCCESS:")} ${chalk.underline(address)} has bought ${chalk.bold(additionalPayment*pricePerMB)} MB of data for ${chalk.green.bold(additionalPayment)}.`);
 
     res.json({
         success: true
