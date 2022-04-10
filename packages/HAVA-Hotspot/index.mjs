@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import express from 'express';
 import bodyParser from 'body-parser';
-import {ethers} from "ethers";
+import {BigNumber, ethers} from "ethers";
 import * as readline from "readline-sync";
 import * as fs from "fs";
 import {createRequire} from "module";
@@ -191,7 +191,7 @@ app.post('/updatePayment', async (req, res) => {
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     const balance = balances[address]
 
-    if(amount > balance || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
+    if(BigNumber.from(amount).gt(balance) || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
         console.log(`${chalk.red.bold("FAILED:")} Additional payment from ${chalk.underline(address)} failed because fraud was detected.`);
         if(amount > balance)
             console.log("User out of funds")
