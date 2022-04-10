@@ -1,67 +1,128 @@
 import chalk from 'chalk';
 import express from 'express';
-import * as bodyParser from 'body-parser';
-const app = express()
-import { ethers } from "ethers";
-
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const havaAbi = require('../contracts/src/abis/hava.json');
+import bodyParser from 'body-parser';
+import {ethers} from "ethers";
 import * as readline from "readline-sync";
 import * as fs from "fs";
+import {createRequire} from "module";
+import cors from "cors";
+
+const require = createRequire(import.meta.url);
+const { spawnSync } = require( 'child_process' );
+const havaAbi = require('./hava.json');
+
+const app = express();
+app.use(express.static('public'));
+app.use(cors());
+app.use(bodyParser.json());
 
 const port = 4000;
 
 let privateKey = null
-try{
-privateKey = fs.readFileSync('./privateKey.txt',{encoding:'utf8', flag:'r'});
-}catch(el){
+try {
+    privateKey = fs.readFileSync('./privateKey.txt', {encoding: 'utf8', flag: 'r'});
+} catch (el) {
     // No op
 }
-while(!privateKey) {
+
+if (privateKey)
+    if ('y' == readline.question(`Found the ${chalk.bold.red('private')} key used last time. Would you like to use a ${chalk.bold.red('different')} one? (${chalk.bold.red('y')}/${chalk.bold.green('N')})`))
+        privateKey = null
+
+while (!privateKey) {
     privateKey = readline.question(`To get started setting up your ${chalk.bold.blue('HAVA Hotspot')}. Please input the ${chalk.bold.red('private')} key of the wallet you would like to connect (in hex): \n`)
     fs.writeFileSync("privateKey.txt", privateKey);
 }
+
+const initialPaymentQuestion = `The client ${chalk.green("pays")} an initial fee to cover the gas fees of future smart contract calls. Type a whole number to ${chalk.red('change')} the fee (default: ${chalk.green("1 HAVA")}): `
+let initialPaymentCost
+if (initialPaymentCost = readline.question(initialPaymentQuestion))
+    // initialPaymentCost need to be a positive whole number
+    while(initialPaymentCost && initialPaymentCost - Math.floor(initialPaymentCost) != 0 && initialPaymentCost > 0)
+        initialPaymentCost = readline.question(initialPaymentQuestion)
+if(!initialPaymentCost)
+    initialPaymentCost = 1
+
+const pricePerMBQuestion = `The client ${chalk.green("pay")} by the MB. Type a whole number to ${chalk.red('change')} the price per MB (default: ${chalk.green("1 HAVA/MB")}): `
+let pricePerMB
+if (pricePerMB = readline.question(pricePerMBQuestion))
+    // pricePerMB need to be a positive whole number
+    while(pricePerMB && pricePerMB - Math.floor(pricePerMB) != 0 && pricePerMB > 0)
+        pricePerMB = readline.question(pricePerMBQuestion)
+if(!pricePerMB)
+    pricePerMB = 1
+
+// TODO: Send pricePerMB and IntialPrice to UI
 
 const infuraProjectId = "239ff2f143084d0f957c39a01c46998e";
 const provider = new ethers.providers.JsonRpcProvider(`https://rinkeby.infura.io/v3/${infuraProjectId}`);
 
 let signer = new ethers.Wallet(privateKey, provider);
 
-const contract = new ethers.Contract("0x7b41393CFd257394d60153D7b09498fC0DCBeE10", havaAbi, provider);
+const contract = new ethers.Contract("0x7b41393CFd257394d60153D7b09498fC0DCBeE10", havaAbi, provider).connect(signer);
 
-async function stuff() {
-    console.log(signer.address)
+console.log(`Server wallet address is ${chalk.underline(signer.address)}`)
 
-    console.log(await contract.balanceOf(signer.getAddress()))
+let balances = {}
+let lockTimestamps = {}
+let signedPayments = {} // elements will be [amount, name, signature]
+let nonces = {}
+let ipAddressWalletMap = new Map();
 
-    // console.log(accounts)
-}
-stuff();
-
+const domain = {
+    name: 'HavaToken',
+    version: '1.0.0',
+    chainId: 4,
+    verifyingContract: contract.address,
+};
 
 app.post('/initialize', async (req, res) => {
     // The body should be the signed message from the user
-    const { body } = req;
-    const { amount, nonce, signature } = body;
+    const {body} = req;
+    const {amount, nonce, signature} = body;
+    console.log({amount, nonce, signature});
 
-    if (amount != 1) {
+    if (amount != initialPaymentCost) {
         return res.json({
-            "error": true
+            initialized: false
         });
     }
 
     // Verify the signature
     // setLock(uint256 amount, uint256 nonce, bytes memory signature)
+    let transaction;
     try {
-        await contract.setLock(amount, nonce, signature).then(e => e.wait(5));
-    } catch(e) {
+        transaction = await contract.setLock(amount, nonce, signature).then(e => e.wait(1));
+    } catch (e) {
         return res.json({
+            initialized: false,
             error: e.message
         });
     }
-    
-    // TODO: Initialize
+
+    const types = {
+        ClientLockAuthorization: [
+            {name: 'amount', type: 'uint256'},
+            {name: 'nonce', type: 'uint256'}
+        ]
+    };
+
+    const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
+    ipAddressWalletMap.set(req.ip, address);
+
+    const timestamp = transaction.timestamp
+    lockTimestamps[address] = timestamp;
+
+    const secondsTillTimeout = 60 * (60 - 1) - (new Date().getSeconds() - timestamp)
+    // Try to cash out right before the lock expires
+    setTimeout(() => cashInPayment(req.ip, ), secondsTillTimeout * 1000)
+
+    const balance = await contract.balanceOf(address);
+    balances[address] = balance;
+
+    // Save the nonce to validate future transactions
+    nonces[address] = nonce;
+
     res.json({
         dataUsed: 0,
         dataLimit: 0,
@@ -71,19 +132,105 @@ app.post('/initialize', async (req, res) => {
 })
 
 app.post('/status', async (req, res) => {
-    const { body } = req;
-    const { address } = body;
+    const {body} = req;
+    const {address} = body;
+    const amountAlreadyPaid = signedPayments[address] ? 0 : signedPayments[address][0]
 
-    const balance = await contract.balanceOf(address);
-    
+    let dataUsed = 0;
+    if (clientStateMap.has(address)) {
+        const clientState = clientStateMap.get(address);
+        dataUsed = clientState.download_this_session + clientState.upload_this_session;
+    }
+
+    let dataLimit = amountAlreadyPaid * pricePerMB * 1024;
+
     res.json({
-        dataUsed: 0,
-        dataLimit: 0,
-        initialized: true,
-        nonce: ''
+        dataUsed: dataUsed,
+        pricePerMB,
+        initialPaymentCost,
+        dataLimit,
+        initialized: checkIfLocked(address),
+    });
+})
+
+app.post('/updatePayment', async (req, res) => {
+    const {body} = req;
+    const {amount, nonce, signature} = body;
+    const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
+    const balance = balances[address]
+
+    if(amount > balance || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount))
+        return res.json({
+            success: false
+        });
+
+    signedPayments[address] = [amount, nonce, signature];
+
+    auth(req.ip);
+
+    res.json({
+        success: true
     });
 })
 
 app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
+    // console.log(`Listening on port ${port}`)
 })
+
+function checkIfLocked(address) {
+    const diff = new Date().getSeconds() - lockTimestamps[address]
+    return (diff < 60 * (60 - 1))
+}
+
+async function cashInPayment(ip, address) {
+    if (checkIfLocked(address) && signedPayments[address]) {
+        lockTimestamps[address] = 0
+        //...signedPayments[address] = amount, nonce, signature
+        await contract.releaseLock(...signedPayments[address]).then(e => e.wait(5)).catch(console.log)
+        signedPayments[address] = null
+        console.log(`${chalk.green('Successfully')} received payment from ${chalk.underline(address)} of ${chalk.bold.green(amount)}`)
+        deauth(ip);
+    }
+}
+
+function deauth(ipAddress) {
+    spawnSync( 'sudo', ['ndsctl', 'deauth', ipAddress]);
+}
+
+function auth(ipAddress) {
+    spawnSync( 'sudo', ['ndsctl', 'auth', ipAddress]);
+}
+
+let clientStateMap = new Map();
+
+// TODO: Check the json file to see if client has disconnect, call the cashInPayment function if so
+setInterval(() => {
+    const ls = spawnSync( 'sudo', ['ndsctl', 'json']);
+    const parsed = JSON.parse(ls.stdout.toString());
+
+    let newStateMap = new Map();
+
+    Object.values(parsed.clients).forEach(client => {
+        newStateMap.set(client.ip, client.state);
+    });
+
+    // TODO: cashInPayment for all clients that are in clientStateMap but not in newStateMap
+    clientStateMap.forEach((state, ip) => {
+        const walletAddr = ipAddressWalletMap.get(ip);
+        if (!walletAddr) {
+            return;
+        }
+
+        if (!newStateMap.has(ip)) {
+            cashInPayment(ip, walletAddr);
+            return;
+        }
+
+        if (balances[walletAddr][0] * pricePerMB * 1024 > state.download_this_session + state.upload_this_session) {
+            deauth(ip);
+            return;
+        }
+    });
+
+    clientStateMap = newStateMap;
+}, 1000);

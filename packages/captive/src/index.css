@@ -2,6 +2,7 @@
 
 html {
   font-family: 'Inter', sans-serif;
+  background-color: #282c34;
 }
 
 @supports (font-variation-settings: normal) {

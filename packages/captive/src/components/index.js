@@ -33,7 +33,6 @@ export const Button = styled.button`
 `;
 
 export const Container = styled.div`
-  background-color: #282c34;
   display: flex;
   flex-direction: column;
   height: calc(100vh);
