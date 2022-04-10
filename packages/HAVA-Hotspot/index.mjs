@@ -6,7 +6,7 @@ import * as readline from "readline-sync";
 import * as fs from "fs";
 import {createRequire} from "module";
 import cors from "cors";
-import fetch from 'node-fetch'; 
+import fetch from 'node-fetch';
 
 const require = createRequire(import.meta.url);
 const {spawnSync} = require('child_process');
@@ -166,7 +166,7 @@ app.post('/status', async (req, res) => {
     let dataUsed = 0;
     if (clientStateMap.has(req.ip)) {
         const clientState = clientStateMap.get(req.ip);
-        dataUsed = clientState.download_this_session + clientState.upload_this_session;
+        dataUsed = Number(clientState.download_this_session) + Number(clientState.upload_this_session);
     }
 
     let dataLimit = amountAlreadyPaid * pricePerMB * 1024;
@@ -290,7 +290,8 @@ setInterval(() => {
             return;
         }
 
-        if (balances[walletAddr] && balances[walletAddr][0] * pricePerMB * 1024 > state.download_this_session + state.upload_this_session) {
+        if (balances[walletAddr] &&
+            balances[walletAddr][0] > pricePerMB * (Number(state.download_this_session) + Number(state.upload_this_session)) / 4096) {
             deauth(ip);
             return;
         }
