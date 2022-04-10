@@ -15,6 +15,7 @@ import {utils} from 'ethers';
 import {TransferInputField} from "../TransferInputField/TransferInputField";
 
 import {abis, addresses} from "@my-app/contracts";
+import {GradientText} from "../GradientText/GradientText";
 
 const BigInt = window.BigInt;
 
@@ -56,8 +57,8 @@ function WalletButton(props) {
 
 export default function Transfer() {
     const multiplier = {
-        "ETH": 10000000,
-        "HAVA": 1 / 10000000
+        "ETH": "10000000",
+        "HAVA": "10000000"
     }
 
     const otherCurrency = {
@@ -65,7 +66,7 @@ export default function Transfer() {
         "HAVA": "ETH"
     }
     const [currentCurrency, setCurrentCurrency] = useState("ETH")
-    const [conversionBalance, setConversionBalance] = useState("0")
+    const [conversionBalance, setConversionBalance] = useState("100000000000000")
 
     const decimals = currentCurrency === "ETH" ? 18 : 0;
 
@@ -88,7 +89,11 @@ export default function Transfer() {
 
     let conversionAmount = BigInt(0);
     try {
-        conversionAmount = (BigInt(conversionBalance) / BigInt("1000000000000000000")) * BigInt(multiplier[currentCurrency]);
+        if (currentCurrency === "ETH") {
+            conversionAmount = (BigInt(conversionBalance) * BigInt("10000000") / BigInt("1000000000000000000") );
+        } else {
+            conversionAmount = (BigInt(conversionBalance) * BigInt("1000000000000000000") / BigInt("10000000") );
+        }
     } catch (e) {
         console.error(e);
     }
@@ -96,7 +101,7 @@ export default function Transfer() {
     const swap = useCallback(() => {
         if (currentCurrency === "ETH") {
             // function buyToken() payable
-            buyTokenSend({value: conversionAmount});
+            buyTokenSend({value: conversionBalance});
         } else {
             // function sellToken(uint256 amount)
             sellTokenSend(conversionAmount);
@@ -109,16 +114,22 @@ export default function Transfer() {
         alignItems: 'center',
         flexDirection: 'column',
         alignSelf: 'center',
-        width: '450px',
-        backgroundColor: '#575252',
-        borderRadius: 6,
+        width: '500px',
+        border: '1px solid black',
+        backgroundColor: 'rgba(0, 0, 0, 0.25)',
+        borderRadius: 12,
+        padding: '32px',
+        color: 'black'
     }
 
     return (
-        <Container>
+        <Container id="swap">
             <div style={divStyle}>
-                <h1>Swap</h1>
-                <TransferInputField currencyName={"ethereum"} balance={etherBalance} symbol={"ETH"} decimals={decimals}
+                <GradientText><h1>Swap</h1></GradientText>
+                <TransferInputField currencyName={currentCurrency}
+                                    balance={currentCurrency === "HAVA" ? havaBalance : etherBalance}
+                                    symbol={currentCurrency}
+                                    decimals={currentCurrency === "ETH" ? 18 : 0}
                                     value={conversionBalance} setValue={setConversionBalance}/>
 
                 <div style={{height: "10px"}} />
@@ -130,13 +141,14 @@ export default function Transfer() {
 
                 <div style={{height: "10px"}} />
 
-                <TransferInputField currencyName={"HAVA"} balance={havaBalance} decimals={0}
-                                    symbol={"HAVA"} value={conversionAmount.toString()} setValue={() => {
+                <TransferInputField currencyName={currentCurrency === "ETH" ? "HAVA" : "ETH"}
+                                    balance={currentCurrency === "ETH" ? havaBalance : etherBalance}
+                                    decimals={currentCurrency === "ETH" ? 0 : 18}
+                                    symbol={currentCurrency === "ETH" ? "HAVA" : "ETH"}
+                                    value={conversionAmount.toString()} setValue={() => {
                 }}/>
 
-                <p>
-                    1 {currentCurrency} = {multiplier[currentCurrency]} {otherCurrency[currentCurrency]}
-                </p>
+                <div style={{height: "30px"}} />
 
                 {account ? <Button style={{backgroundColor: "#d9e6ff", width: "90%"}} onClick={swap}>SWAP</Button> :
                     <WalletButton color="#d9e6ff" textColor="#002c7d"/>}

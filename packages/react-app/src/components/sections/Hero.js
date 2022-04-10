@@ -5,7 +5,7 @@ import ButtonGroup from '../elements/ButtonGroup';
 import Button from '../elements/Button';
 import Image from '../elements/Image';
 import Modal from '../elements/Modal';
-import HeroImg from './../../assets/images/video-placeholder.jpg'
+import HeroImg from './../../assets/images/thumbnail.png'
 const propTypes = {
   ...SectionProps.types
 }
@@ -70,8 +70,8 @@ const Hero = ({
                 </p>
               <div className="reveal-from-bottom" data-reveal-delay="600">
                 <ButtonGroup>
-                  <Button tag="a" color="primary" wideMobile href="/transfer">
-                    Get started
+                  <Button tag="a" color="primary" wideMobile href="#swap">
+                    Swap now
                     </Button>
                 </ButtonGroup>
               </div>

@@ -73,11 +73,11 @@ const FeaturesTiles = ({
                 </div>
                 <div className="features-tiles-item-content">
                   <h4 className="mt-0 mb-8">
-                    Robust Workflow
+                    Internet Access for All
                     </h4>
                   <p className="m-0 text-sm">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
-                    </p>
+                    Connect to any HAVA-hotspot, and begin browsing the internet instantly in an affordable pay-as-you-go model. No upfront costs. No hidden fees.
+                  </p>
                 </div>
               </div>
             </div>
@@ -98,8 +98,8 @@ const FeaturesTiles = ({
                     Built on Blockchain
                     </h4>
                   <p className="m-0 text-sm">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
-                    </p>
+                    Smart contracts ensure that you get the internet access you pay for, even without any centralized third parties involved.
+                  </p>
                 </div>
               </div>
             </div>
@@ -117,10 +117,10 @@ const FeaturesTiles = ({
                 </div>
                 <div className="features-tiles-item-content">
                   <h4 className="mt-0 mb-8">
-                    Robust Workflow
+                    No Middlemen
                     </h4>
                   <p className="m-0 text-sm">
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat.
+                    Access to HAVA-hopspots is fully decentralized, drastically lowering costs and barriers to access.
                     </p>
                 </div>
               </div>

@@ -85,7 +85,7 @@ const Header = ({
             'site-header-inner',
             bottomDivider && 'has-bottom-divider'
           )}>
-          <Logo />
+          {/*<Logo />*/}
           {!hideNav &&
             <>
               <button
@@ -112,7 +112,7 @@ const Header = ({
                       navPosition && `header-nav-${navPosition}`
                     )}>
                     <li>
-                      <Link to="/transfer" className="button button-primary button-wide-mobile button-sm" onClick={closeMenu}>Exchange</Link>
+                      <a href="#swap" className="button button-primary button-wide-mobile button-sm">Exchange</a>
                     </li>
                   </ul>
                 </div>
