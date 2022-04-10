@@ -54,6 +54,20 @@ if(!pricePerMB)
 
 let shouldUploadLocation = readline.question(`Would you like to upload your router's location to the ${chalk.bold.blue('HAVA Hotspot')}App? (${chalk.bold.green('Y')}/${chalk.bold.red('n')})`) != 'n'
 
+if(shouldUploadLocation){
+    let locationObj = {latitude: null, longitude: null}
+    locationObj[latitude] = readline.question(`Please enter your ${chalk.bold.blue('latitude')}: `)
+    locationObj[longitude] = readline.question(`Please enter your ${chalk.bold.blue('longitude')}: `)
+    fetch('https://cockroachapp.herokuapp.com/upload',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(locationObj)
+    })
+}
+
+
 const infuraProjectId = "239ff2f143084d0f957c39a01c46998e";
 const provider = new ethers.providers.JsonRpcProvider(`https://rinkeby.infura.io/v3/${infuraProjectId}`);
 
@@ -234,8 +248,3 @@ setInterval(() => {
 
     clientStateMap = newStateMap;
 }, 1000);
-
-
-if(shouldUploadLocation){
-
-}
