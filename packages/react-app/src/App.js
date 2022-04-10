@@ -2,7 +2,7 @@ import {useQuery} from "@apollo/client";
 import {Contract} from "@ethersproject/contracts";
 import {formatEther, formatUnits, parseEther} from '@ethersproject/units'
 import {shortenAddress, useCall, useEthers, useLookupAddress, useEtherBalance, useTokenBalance, useContractFunction} from "@usedapp/core";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useCallback, useState} from "react";
 import {Gradient} from 'react-gradient';
 import {Body, Button, Container, Header, Image, Link} from "./components";
 import TextField from '@material-ui/core/TextField'
@@ -52,22 +52,16 @@ function WalletButton(props) {
 
 function App() {
     const multiplier = {
-        "ETH": 2.0,
-        "HAVA": 0.5
+        "ETH": 10000000,
+        "HAVA": 1/10000000
     }
 
     const otherCurrency = {
-        "ETH": 2.0,
-        "HAVA": 0.5
+        "ETH": "HAVA",
+        "HAVA": "ETH"
     }
     const [currentCurrency, setCurrentCurrency] = useState("ETH")
     const [conversionBalance, setConversionBalance] = useState("0")
-
-    let conversionAmount = BigInt(0);
-    try {
-        conversionAmount = BigInt(conversionBalance);
-    } catch {
-    }
 
     const decimals = currentCurrency === "ETH" ? 18 : 0;
 
@@ -76,13 +70,27 @@ function App() {
     const etherBalance = useEtherBalance(account)
     const havaBalance = useTokenBalance(addresses.havaToken, account)
 
-    const havaInterface = new utils.Interface(abis.havaToken);
+    const havaInterface = new utils.Interface(abis.hava);
     const contract = new Contract(addresses.havaToken, havaInterface);
-    const { state, send } = useContractFunction(contract, 'setLock', { transactionName: 'Wrap' })
+    const { state: buyTokenState, send: buyTokenSend } = useContractFunction(contract, 'buyToken', { transactionName: 'Buy HAVA Token' })
+    const { state: sellTokenState, send: sellTokenSend } = useContractFunction(contract, 'sellToken', { transactionName: 'Sell HAVA Token' })
 
-    const swap = () => {
-
+    let conversionAmount = BigInt(0);
+    try {
+      conversionAmount = (BigInt(conversionBalance) / BigInt("1000000000000000000")) * BigInt(multiplier[currentCurrency]);
+    } catch (e) {
+      console.error(e);
     }
+
+    const swap = useCallback(() => {
+      if(currentCurrency === "ETH") {
+        // function buyToken() payable
+        buyTokenSend({value: conversionAmount});
+      } else {
+        // function sellToken(uint256 amount)
+        sellTokenSend(conversionAmount);
+      }
+    }, [buyTokenSend, sellTokenSend, conversionBalance, currentCurrency]);
 
     const divStyle = {
         display: 'flex',
@@ -104,7 +112,7 @@ function App() {
                 <WalletButton/>
             </Header>
 
-            {havaBalance && (
+            {havaBalance != null && (
                 <div style={divStyle}>
                     <p>HAVA Balance: {formatUnits(havaBalance, 0)}</p>
                 </div>
@@ -128,13 +136,12 @@ function App() {
             <Button style={{padding: 5, backgroundColor: "#ededed"}} onClick={() => {
                 setConversionBalance("0")
                 setCurrentCurrency((currentCurrency === "HAVA") ? "ETH" : "HAVA");
-                setConversionBalance(0)
             }}>↑↓ Reverse Direction</Button>
 
             <div style={{height: 10}}></div>
 
             <div style={{display: 'flex', flexDirection: 'row', paddingBottom: 40, paddingLeft: 10}}>
-                <TextField disabled defaultValue={conversionBalance} value={conversionBalance}
+                <TextField disabled value={conversionAmount.toString()}
                            InputProps={{style: {fontSize: 20}}} variant="filled" fullWidth/>
                 <p style={{paddingLeft: 10}}>{currentCurrency === "HAVA" ? "ETH" : "HAVA"}</p>
             </div>

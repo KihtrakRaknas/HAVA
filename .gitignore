@@ -24,3 +24,5 @@ yarn-error.log*
 packages/subgraph/build/
 packages/subgraph/src/types/
 packages/contracts/sol/artifacts/*
+
+packages/HAVA-Hotspot/privateKey.txt
