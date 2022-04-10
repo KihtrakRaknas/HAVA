@@ -6,6 +6,7 @@ import * as readline from "readline-sync";
 import * as fs from "fs";
 import {createRequire} from "module";
 import cors from "cors";
+import fetch from 'node-fetch'; 
 
 const require = createRequire(import.meta.url);
 const { spawnSync } = require( 'child_process' );
