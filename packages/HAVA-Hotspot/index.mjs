@@ -8,7 +8,7 @@ import {createRequire} from "module";
 import cors from "cors";
 
 const require = createRequire(import.meta.url);
-const { spawnSync } = require( 'child_process' );
+const {spawnSync} = require('child_process');
 const havaAbi = require('./hava.json');
 
 const app = express();
@@ -38,27 +38,27 @@ const initialPaymentQuestion = `The client ${chalk.green("pays")} an initial fee
 let initialPaymentCost
 if (initialPaymentCost = readline.question(initialPaymentQuestion))
     // initialPaymentCost need to be a positive whole number
-    while(initialPaymentCost && initialPaymentCost - Math.floor(initialPaymentCost) != 0 && initialPaymentCost > 0)
+    while (initialPaymentCost && initialPaymentCost - Math.floor(initialPaymentCost) != 0 && initialPaymentCost > 0)
         initialPaymentCost = readline.question(initialPaymentQuestion)
-if(!initialPaymentCost)
+if (!initialPaymentCost)
     initialPaymentCost = 1
 
 const pricePerMBQuestion = `The client ${chalk.green("pays")} by the MB. Type a whole number to ${chalk.red('change')} the price per MB (default: ${chalk.green("1 HAVA/MB")}): `
 let pricePerMB
 if (pricePerMB = readline.question(pricePerMBQuestion))
     // pricePerMB need to be a positive whole number
-    while(pricePerMB && pricePerMB - Math.floor(pricePerMB) != 0 && pricePerMB > 0)
+    while (pricePerMB && pricePerMB - Math.floor(pricePerMB) != 0 && pricePerMB > 0)
         pricePerMB = readline.question(pricePerMBQuestion)
-if(!pricePerMB)
+if (!pricePerMB)
     pricePerMB = 1
 
 let shouldUploadLocation = readline.question(`Would you like to upload your router's location to the ${chalk.bold.blue('HAVA Hotspot')}App? (${chalk.bold.green('Y')}/${chalk.bold.red('n')})`) != 'n'
 
-if(shouldUploadLocation){
+if (shouldUploadLocation) {
     let locationObj = {latitude: null, longitude: null}
     locationObj["latitude"] = readline.question(`Please enter your ${chalk.bold.blue('latitude')}: `)
     locationObj["longitude"] = readline.question(`Please enter your ${chalk.bold.blue('longitude')}: `)
-    fetch('https://cockroachapp.herokuapp.com/upload',{
+    fetch('https://cockroachapp.herokuapp.com/upload', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -127,7 +127,7 @@ app.post('/initialize', async (req, res) => {
             error: e.message
         });
     }
-    
+
     ipAddressWalletMap.set(req.ip, address);
 
     const timestamp = (await provider.getBlock(transaction.blockNumber)).timestamp;
@@ -137,9 +137,9 @@ app.post('/initialize', async (req, res) => {
     // console.log("timestamp: ", timestamp);
     // console.log("Date.now(): ", (new Date().getTime()/1000));
 
-    const secondsTillTimeout = 60 * (60 - 1) - (new Date().getTime()/1000 - timestamp)
+    const secondsTillTimeout = 60 * (60 - 1) - (new Date().getTime() / 1000 - timestamp)
     // Try to cash out right before the lock expires
-    setTimeout(() => cashInPayment(req.ip, ), secondsTillTimeout * 1000)
+    setTimeout(() => cashInPayment(req.ip,), secondsTillTimeout * 1000)
 
     const balance = await contract.balanceOf(address);
     balances[address] = balance;
@@ -147,7 +147,7 @@ app.post('/initialize', async (req, res) => {
     // Save the nonce to validate future transactions
     nonces[address] = nonce;
 
-    console.log(`${chalk.green.bold("SUCCESS:")} Initial transaction for ${chalk.underline(address)} initialized successfully. ${chalk.green.bold(amount+" HAVA")} has been sent to your wallet!`);
+    console.log(`${chalk.green.bold("SUCCESS:")} Initial transaction for ${chalk.underline(address)} initialized successfully. ${chalk.green.bold(amount + " HAVA")} has been sent to your wallet!`);
 
     res.json({
         dataUsed: 0,
@@ -196,13 +196,13 @@ app.post('/updatePayment', async (req, res) => {
     const address = ethers.utils.verifyTypedData(domain, types, {amount, nonce}, signature);
     const balance = balances[address]
 
-    if(BigNumber.from(amount).gt(balance) || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)){
+    if (BigNumber.from(amount).gt(balance) || nonces[address] != nonce || (signedPayments[address] && signedPayments[address][0] >= amount)) {
         console.log(`${chalk.red.bold("FAILED:")} Additional payment from ${chalk.underline(address)} failed because fraud was detected.`);
-        if(amount > balance)
+        if (amount > balance)
             console.log("User out of funds")
-        if(nonces[address] != nonce)
+        if (nonces[address] != nonce)
             console.log("Nonces don't match")
-        if(signedPayments[address] && signedPayments[address][0] >= amount)
+        if (signedPayments[address] && signedPayments[address][0] >= amount)
             console.log("User did not increase the amount they are willing to pay")
         return res.json({
             success: false
@@ -210,14 +210,14 @@ app.post('/updatePayment', async (req, res) => {
     }
 
     let additionalPayment = amount
-    if(signedPayments[address])
+    if (signedPayments[address])
         additionalPayment = amount - signedPayments[address][0]
 
     signedPayments[address] = [amount, nonce, signature];
 
     auth(req.ip);
 
-    console.log(`${chalk.green.bold("SUCCESS:")} ${chalk.underline(address)} has bought ${chalk.bold(additionalPayment*pricePerMB)} MB of data for ${chalk.green.bold(additionalPayment)}.`);
+    console.log(`${chalk.green.bold("SUCCESS:")} ${chalk.underline(address)} has bought ${chalk.bold(additionalPayment * pricePerMB)} MB of data for ${chalk.green.bold(additionalPayment)}.`);
 
     res.json({
         success: true
@@ -227,7 +227,7 @@ app.post('/updatePayment', async (req, res) => {
 app.listen(port, '0.0.0.0');
 
 function checkIfLocked(address) {
-    const diff = new Date().getTime()/1000 - lockTimestamps[address]
+    const diff = new Date().getTime() / 1000 - lockTimestamps[address]
     return (diff < 60 * (60 - 1))
 }
 
@@ -244,25 +244,25 @@ async function cashInPayment(ip, address) {
 
 function deauth(ipAddress) {
     console.log("deauthing", ipAddress)
-    spawnSync( 'sudo', ['ndsctl', 'deauth', ipAddress]);
+    spawnSync('sudo', ['ndsctl', 'deauth', ipAddress]);
 }
 
 function auth(ipAddress) {
     console.log("authing", ipAddress)
-    spawnSync( 'sudo', ['ndsctl', 'auth', ipAddress]);
+    spawnSync('sudo', ['ndsctl', 'auth', ipAddress]);
 }
 
 let clientStateMap = new Map();
 
 // TODO: Check the json file to see if client has disconnect, call the cashInPayment function if so
 setInterval(() => {
-    let ls; 
-    let parsed; 
+    let ls;
+    let parsed;
 
     try {
-        ls = spawnSync( 'sudo', ['ndsctl', 'json']);
+        ls = spawnSync('sudo', ['ndsctl', 'json']);
         parsed = JSON.parse(ls.stdout.toString());
-    } catch(e) {
+    } catch (e) {
         console.error(e);
         return
     }
@@ -289,7 +289,7 @@ setInterval(() => {
             return;
         }
 
-        if (balances[walletAddr][0] * pricePerMB * 1024 > state.download_this_session + state.upload_this_session) {
+        if (balances[walletAddr] && balances[walletAddr][0] * pricePerMB * 1024 > state.download_this_session + state.upload_this_session) {
             deauth(ip);
             return;
         }
