@@ -222,9 +222,7 @@ app.post('/updatePayment', async (req, res) => {
     });
 })
 
-app.listen(port, () => {
-    // console.log(`Listening on port ${port}`)
-})
+app.listen(port, '0.0.0.0');
 
 function checkIfLocked(address) {
     const diff = new Date().getTime()/1000 - lockTimestamps[address]
